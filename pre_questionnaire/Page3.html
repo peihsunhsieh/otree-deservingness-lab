@@ -1,0 +1,15 @@
+{{ block title }}
+    Questionnaire
+{{ endblock }}
+
+{{ block content }}
+    {{ formfield player.pid1 label=pid1_label }}
+    {#
+    {{ formfield player.pid2 label=pid2_label }}
+    {{ formfield player.pid3 label=pid3_label }}
+    {{ formfield player.pid4 label=pid4_label }}
+    {{ formfield player.pid5 label=pid5_label }}
+    #}
+    {{ next_button }}
+
+{{ endblock }}

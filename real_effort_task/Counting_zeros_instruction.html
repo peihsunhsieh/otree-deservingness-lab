@@ -1,0 +1,26 @@
+{{ block title }}
+    Counting Zeros
+{{ endblock }}
+
+{{ block content }}
+<p style="text-align: left;">On the next page, you will do the "<b>Counting Zeros</b>" game.</p><p style="text-align: left;">You will have to count the zeros in the matrix and enter the correct answer in the field.</p>
+<ul style="text-align: left;">
+    <li>You can earn <span style="color:red;"><b>${{player.wage}}</b> per table by completing each table with the correct answer </span>about how many zeros there are in a table.&nbsp;</li>
+    <li>The maximum number of tables you can complete is ten, but how many tables you want to complete from that maximum number is totally up to you. In other words, you can choose to complete any number of tables up to a maximum of ten. <br></li>
+    <li><b>You cannot choose to skip a table and do the next one.</b><br></li></ul>
+
+    <button class="btn btn-primary" style="display: none" id="next-button">Next</button>
+
+    {#
+    The following is the next button occurs afere 10 seconds.
+    #}
+    
+    <script>
+        setTimeout(function() {
+            document.getElementById('next-button').style.display = 'block';
+        }, 3 * 1000);
+    </script>
+
+{{ endblock }}
+
+

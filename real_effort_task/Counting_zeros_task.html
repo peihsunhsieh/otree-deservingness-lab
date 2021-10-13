@@ -1,0 +1,44 @@
+{% block styles  %}
+    <link href="{% static 'real_effort.css' %}" rel="stylesheet"/>
+{% endblock %}
+
+{{ block title }}
+Counting zeros
+{{ endblock }}
+
+{{ block content }}
+<div class="d-flex flex-column align-items-center">
+    <!--
+    <h3>
+        Iteration <span id="iter-txt"></span>
+    </h3>
+    -->
+    <p>Your wage: ${{player.wage}}</span>. Solved: <span id="solved-txt"></span>. Earning: $<span id="earning-txt"></span>.</p>
+    <img class="captcha m-1" id="captcha-img">
+    <div class="input-group m-1" id="answer_box" style="padding-bottom:60px">
+        <input type="{{ input_type }}" id="answer-inp" class="form-control"
+               placeholder="{{ placeholder }}"
+               autocorrect="off" autocapitalize="off" spellcheck="false">
+        <button type="button" id="submit-btn" class="btn btn-outline-secondary">Submit</button>
+    </div>
+
+    <button class="btn btn-primary" id="next-button" onclick="checkSubmit()">If you do not want to do more tables,<br> please click here to go to the next page.</button>
+    <p class="warn" id="warning-txt"></p>
+    {{ comment }}
+    {{ if DEBUG }}
+    <button type="button" id="cheat-btn" class="btn btn-dark">Cheat</button>
+    {{ endif }}
+    {{ endcomment }}
+</div>
+<br>
+{{ include Constants.instruction_counting_zeros }}
+
+{{ endblock }}
+
+{{ block scripts }}
+<script src="{{ static 'real_effort.js' }}"></script>
+{{ comment }}
+{{ if DEBUG }}<script src="{{ static 'real_effort_cheating.js' }}"></script>{{ endif }}
+{{ endcomment }}
+{{ endblock }}
+

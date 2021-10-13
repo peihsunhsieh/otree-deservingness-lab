@@ -1,0 +1,14 @@
+{{ block title }}
+    Questionnaire
+{{ endblock }}
+
+{{ block content }}
+    <p>Thank you for participating in the study. At the beginning, we want to ask you some questions about yourself.</p>
+    {{ formfield 'gender' label="What is your gender?" }}
+    {{ formfield 'year_of_birth' label="What is the year of your birth?" }}
+    {{ formfield 'household_income' label="The next question is about the total combined income of all members of your family during the past 12 months. This includes money from jobs, net income from business, farm or rent, pensions, dividends, interest, Social Security payments, and any other money income received by members of your family who are 15 years of age or older. What was the total income of your family during the past 12 months? TYPE THE NUMBER. YOUR BEST GUESS IS FINE." }}
+    {{ formfield 'education' label="What is the highest level of school you have completed or the highest degree you have received?" }}
+    {{ formfield 'pid0' label="Generally speaking, do you usually think of yourself as a Democrat, a Republican, an independent, or what?" }}
+    {{ next_button }}
+
+{{ endblock }}

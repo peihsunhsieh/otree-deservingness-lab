@@ -1,0 +1,26 @@
+{{ block title }}
+    Just two more questions
+{{ endblock }}
+{{ block content }}
+
+<p>Which statement do you agree with more?</p>
+<p>
+    “Income should be made more equal” &nbsp;
+    {{ for choice in form.post_q1 }}
+        {{ choice }}
+    {{ endfor }}
+    &nbsp; “We need larger income differences as incentives for individual effort”
+</p>
+
+<p>Which statement do you agree with more?</p>
+<p>
+    “In the long run, hard work usually brings a better life” &nbsp;
+    {{ for choice in form.post_q2 }}
+        {{ choice }}
+    {{ endfor }}
+    &nbsp; “Hard work doesn’t generally bring success—it’s more a matter of luck and connections”
+</p>
+
+{{ next_button }}
+
+{{ endblock }}

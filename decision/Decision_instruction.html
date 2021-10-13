@@ -1,0 +1,15 @@
+{{ block title }}
+    Instruction
+{{ endblock }}
+{{ block content }}
+    Now you have matched another participant. You are the {{ player.role }}.
+
+    {{ if player.role == "role A" }}
+        You are going to make decisions about how much you want to give to the pariticipant matched with you. Your decision will be realized.
+    {{ else }}
+        You are going to guess how much the pariticipant matched with you will give you.
+    {{ endif }}
+
+    {{ next_button }}
+
+{{ endblock }}

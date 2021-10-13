@@ -1,0 +1,103 @@
+{{ block content }}
+<center>
+    <img style="width:200px;height:160px;" src="{{ static 'welcome_and_consent_form/SBU_emblem.jpg' }} "/>
+</center>
+    <p style="text-align: center;"><strong>Committees on Research Involving Human Subjects&nbsp; </strong><br />
+    <strong>Established 1971</strong></p>
+
+    <h1 style="text-align: center;">RESEARCH CONSENT FORM</h1>
+    <br/>
+    <p><strong>Project Title: Effort and Preferences for Redistribution</strong><br />
+    <strong>Principal Investigator:</strong> Reuben Kline<br /><strong>
+        Co-Investigator: </strong>Pei-Hsun Hsieh<br />
+        <strong>Department</strong>: Political Science</p>
+    <p><strong>You are being asked to be a volunteer in a research study. </strong></p>
+    <h2>PURPOSE</h2>
+    <p><strong>The purpose of this study is:</strong></p>
+        <ul>
+        <li>To better understand how people make decisions on amounts of work.</li>
+        <li>To understand how people view on income inequality.</li>
+        <li>Approximately 500 people will participate in this research.</li>
+        </ul>
+    <h2>PROCEDURES</h2>
+    <p><strong>If you decide to be in this study, your part will involve several things: </strong></p>
+        <ul>
+        <li>This study will take about one and a half hour.</li>
+        <li>You will participate in an interaction that has real money at stake.</li>
+        <li>You may be anonymously grouped with other people in the lab.</li>
+        <li>You and these other people will participate in an interaction.</li>
+        <li>Depending on how you and the other people answer them, you and they might earn additional money.</li>
+        <li>You will answer these questions using a computer.</li>
+        </ul>
+    <h2>RISKS / DISCOMFORTS</h2>
+    <p><strong>The following risks/discomforts may occur as a result of you being in this study:</strong></p>
+        <ul>
+        <li>There are no foreseeable risks or discomforts associated with your participation in this study.</li>
+        </ul>
+    <h2>BENEFITS</h2>
+        <ul>
+        <li>There is no benefit expected as a result of you being in this study</li>
+        </ul>
+    <h2>PAYMENT TO YOU</h2>
+        <ul>
+        <li>You will be paid $5 for your participation.</li>
+        <li>In addition, you may earn additional money based on the choices you and other people make. This money will be added to the money you are already receiving simply for participating.</li>
+        </ul>
+    <h2>CONFIDENTIALITY</h2>
+    <p><strong>Protecting Your Privacy in this Study</strong></p>
+    <p>All the information we get about you will be kept private. We will do this by not writing down your name or anything else that could link you in any way to the answers you give us for our study. All the study data that we get from you will be kept locked up. If any papers and talks are given about this research, your name will not be used. Your name will only be collected for documentation of consent to be in the study. Your name will not be connected to any answers you provide as part of the study. All data from this study are collected anonymously.</p>
+    {{ formfield_errors 'tax_status' }}
+    <tr>
+        <td><label for="id_tax_status"><strong>Please click on the appropriate box below depending on your residency status:</strong></label><br/></td>
+    </tr> 
+    <tr>
+        <br/>
+    </tr>       
+    <tr>      
+            <td><input class="form-check-input" type="radio" id="id_tax_status-0" name="tax_status" value="True"><label for="id_tax_status-0"><strong>&nbsp; I am a U.S. Citizen or Resident Alien.</strong></label><br/></td>
+    </tr> 
+    <tr>
+            <td>If you are a U.S. Citizen or Resident Alien for tax purposes and are paid $600 or more a year as a research subject, the University will report all payments on an IRS form 1099-MISC (box 3 - other income) to the Internal Revenue Service (IRS). If you receive a 1099-MISC, we cannot provide tax advice and recommend you seek professional advice.<br/></td>
+    </tr>  
+    <tr>
+        <br/>
+    </tr>       
+    <tr>
+            <td><input class="form-check-input" type="radio" id="id_tax_status-1" name="tax_status" value="False"><label for="id_tax_status-1"><strong>&nbsp; I am a Nonresident Alien.</strong></label><br/></td>
+    </tr>  
+    <tr>
+        <td>If you are a Nonresident alien for tax purposes, your earnings today will be subject to 30% tax withholding per IRS rules. We accommodate for the taxes by adjusting the total payment so that your tax status will not affect your earnings in this experiment. The earnings indicated during the course of the experiment will be the earnings you will receive when the experiment ends. The University will report all withholdings and payments on an IRS form 1042-S to the Internal Revenue Service (IRS) per corporate reporting requirements. If you receive a 1042-S, we cannot provide tax advice and recommend you seek professional advice.</td>
+    </tr> 
+    <br/>
+    <br/>
+    <h2>COSTS TO YOU</h2>
+        <ul>
+        <li>There are no foreseeable costs to you for your participation in this study.</li>
+        </ul>
+    <h2>ALTERNATIVES</h2>
+        <ul>
+        <li>Your alternative to being in this study is to simply not participate.</li>
+        </ul>
+    <h2>YOUR RIGHTS AS A RESEARCH SUBJECT </h2>
+        <ul>
+        <li>Your participation in this study is voluntary. You do not have to be in this study if you don't want to be.</li>
+        <li>You have the right to change your mind and leave the study at any time without giving any reason, and without penalty.</li>
+        <li>Any new information that may make you change your mind about being in this study will be given to you.</li>
+        <li>You will get a copy of this consent form to keep.</li>
+        <li>You do not lose any of your legal rights by signing this consent form.</li>
+        </ul>
+    <h2>QUESTIONS ABOUT THE STUDY OR YOUR RIGHTS AS A RESEARCH SUBJECT</h2>
+        <ul>
+        <li>If you have any questions, concerns, or complaints about the study, you may contact Dr. Reuben Kline, PhD, at <a href="mailto:reuben.kline@stonybrook.edu">reuben.kline@stonybrook.edu</a>.</li>
+        <li>If you have any questions about your rights as a research subject or if you would like to obtain information or offer input, you may contact Ms. Aimee Minton, Committee on Research Involving Human Subjects, (631) 632-9032, OR by e-mail, aimee.minton@stonybrook.edu.</li>
+        <li>If you have any questions about your rights as a research subject or if you would like to obtain information or offer input, you may visit Stony Brook University&rsquo;s Community Outreach page, <a href="http://www.stonybrook.edu/research/orc/community.shtml">http://www.stonybrook.edu/research/orc/community.shtml</a> for more information about participating in research, frequently asked questions, and an opportunity to provide feedback, comments, or ask questions related to your experience as a research subject.</li>
+        </ul>
+<p>If you click below, it means that you have read (or have had read to you) the information given in this consent form, and you would like to be a volunteer in this study.</p>
+<br/>
+    <center>
+    <button name="consent" value="False"><strong>Decline.</strong> No, I do not want to participate.</button>
+    <button name="consent" value="True"><strong>Accept.</strong> Yes, I would like to participate.</button> 
+    </center> 
+
+
+{{ endblock }}
