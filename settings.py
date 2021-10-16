@@ -17,6 +17,7 @@ SESSION_CONFIGS = [
         treatment = 2,
         # use_browser_bots=True
     ),    
+    
 ]
 
 # if you set a property in SESSION_CONFIG_DEFAULTS, it will be inherited by all configs
@@ -25,7 +26,18 @@ SESSION_CONFIGS = [
 # e.g. self.session.config['participation_fee']
 
 SESSION_CONFIG_DEFAULTS = dict(
-    real_world_currency_per_point=1.00, participation_fee=0.50, doc=""
+    real_world_currency_per_point=1.00, participation_fee=0.50, doc="",
+    mturk_hit_settings=dict(
+    keywords='bonus, study',
+    title='Decision-making and effort',
+    description='Participate in an experimental research study that involves a group interaction. You could earn $0.5 show-up fee. Bonus payments will be available and will depend on what happens during the study!',
+    frame_height=500,
+    template='global/mturk_template.html',
+    minutes_allotted_per_assignment=60,
+    expiration_hours=7 * 24,
+    qualification_requirements=[]
+    # grant_qualification_id='YOUR_QUALIFICATION_ID_HERE', # to prevent retakes
+),
 )
 
 PARTICIPANT_FIELDS = ['tax_status','consent','more_high_wage','treatment','wage','earning','wait_page_arrival','n_players','is_dropout','dropout_page']

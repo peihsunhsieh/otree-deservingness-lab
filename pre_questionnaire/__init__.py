@@ -25,7 +25,7 @@ class Player(BasePlayer):
         choices=[
             [0, 'Female'],
             [1, 'Male'],
-            [2, 'Others'],
+            [2, 'Other'],
         ],
         widget=widgets.RadioSelect
     )
@@ -50,7 +50,7 @@ class Player(BasePlayer):
             [0, 'Democrat'],
             [1, 'Republican'],
             [2, 'Independent'],
-            [3, 'Others'],
+            [3, 'Other'],
         ],
         widget=widgets.RadioSelect
     )
@@ -62,43 +62,43 @@ class Player(BasePlayer):
         ],
         widget=widgets.RadioSelect
     )
-    pid2 = models.IntegerField(
-        choices=[
-            [0, 'Not important at all'],
-            [1, 'Not very important'],
-            [2, 'Very important'],
-            [3, 'Extremely important'],
-        ],
-        widget=widgets.RadioSelect
-    )
-    pid3 = models.IntegerField(
-        choices=[
-            [0, 'Not at all'],
-            [1, 'Not very well'],
-            [2, 'Very well'],
-            [3, 'Extremely well'],
-        ],
-        widget=widgets.RadioSelect
-    )
-    pid4 = models.IntegerField(
-        choices=[
-            [0, 'Never'],
-            [1, 'Rarely'],
-            [2, 'Some of the time'],
-            [3, 'Most of the time'],
-            [4, 'All of the time'],
-        ],
-        widget=widgets.RadioSelect
-    )
-    pid5 = models.IntegerField(
-        choices=[
-            [0, 'Not at all'],
-            [1, 'Very little'],
-            [2, 'Somewhat'],
-            [3, 'A great deal'],
-        ],
-        widget=widgets.RadioSelect
-    )
+    # pid2 = models.IntegerField(
+    #     choices=[
+    #         [0, 'Not important at all'],
+    #         [1, 'Not very important'],
+    #         [2, 'Very important'],
+    #         [3, 'Extremely important'],
+    #     ],
+    #     widget=widgets.RadioSelect
+    # )
+    # pid3 = models.IntegerField(
+    #     choices=[
+    #         [0, 'Not at all'],
+    #         [1, 'Not very well'],
+    #         [2, 'Very well'],
+    #         [3, 'Extremely well'],
+    #     ],
+    #     widget=widgets.RadioSelect
+    # )
+    # pid4 = models.IntegerField(
+    #     choices=[
+    #         [0, 'Never'],
+    #         [1, 'Rarely'],
+    #         [2, 'Some of the time'],
+    #         [3, 'Most of the time'],
+    #         [4, 'All of the time'],
+    #     ],
+    #     widget=widgets.RadioSelect
+    # )
+    # pid5 = models.IntegerField(
+    #     choices=[
+    #         [0, 'Not at all'],
+    #         [1, 'Very little'],
+    #         [2, 'Somewhat'],
+    #         [3, 'A great deal'],
+    #     ],
+    #     widget=widgets.RadioSelect
+    # )
     pid6 = models.IntegerField(
         choices=[
             [0, 'Closer to Democratic'],

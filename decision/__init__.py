@@ -1,6 +1,6 @@
 from otree.api import *
-import numpy
 import random
+import math
 
 doc = """
 Your app description
@@ -61,11 +61,11 @@ class Subsession(BaseSubsession):
 
 def make_transfer_field(wage,income,treatment,role):
     if treatment==1 and role==1:
-        label=f'If the participant paired with you has earned ${income} with ${wage} per table, how much do do you want to give to the participant?'
+        label=f'If the participant paired with you has earned ${income} with a wage of ${wage} per table from the counting task, how much do do you want to give to the participant?'
     elif treatment==2 and role==1:
         label=f'If the participant paired with you has earned ${income}, how much do do you want to give to the participant?'
     elif treatment==1 and role==2:
-        label=f'If the participant paired with you has earned ${income} with ${wage} per table, how much do you think the participant will give you?'
+        label=f'If the participant paired with you has earned ${income} with a wage of ${wage} per table from the counting task, how much do you think the participant will give you?'
     elif treatment==2 and role==2:
         label=f'If the participant paired with you has earned ${income}, how much do you think the participant will give you?'
 
@@ -225,7 +225,7 @@ def make_belief_field(income):
     return models.IntegerField(
         min=0,
         max=100,
-        label=f'What percentage of participants\' wage per table is $0.1 of those earned ${income} from the counting zeros task?',
+        label=f'What percentage of participants who earned ${income} were assigned a wage of $0.1 per table? (from 0 to 100)',
     )    
 
 class Player(BasePlayer):
@@ -251,13 +251,15 @@ class Player(BasePlayer):
 
     post_q1 = models.IntegerField(
         widget=widgets.RadioSelect,
-        choices=list(range(1,11))
+        choices=list(range(1,11)),
     )
 
     post_q2 = models.IntegerField(
         widget=widgets.RadioSelect,
-        choices=list(range(1,11))
+        choices=list(range(1,11)),
     )    
+    
+    feedback = models.LongStringField(label='Please let us know how do you make your decisions.',blank=True)
 
 
 def waiting_too_long(player):
@@ -286,52 +288,63 @@ def group_by_arrival_time_method(subsession, waiting_players):
     for player in waiting_players:
         if waiting_too_long(player):
             # make a single-player group.
-            player.participant.single_group = True
             return [player]             
 
 def set_payoffs(group):
-    dictator = group.get_player_by_role(Constants.dictator_role)
-    recipient = group.get_player_by_role(Constants.recipient_role)
+    if group.n_players < 2:
+        for p in group.get_players():
+            p.participant.payoff = p.participant.earning        
+    else:
+        dictator = group.get_player_by_role(Constants.dictator_role)
+        recipient = group.get_player_by_role(Constants.recipient_role)
 
-    if group.treatment==1:
-        decision_matrix = [group.yo_l_00, group.yo_l_01, group.yo_l_02, group.yo_l_03, group.yo_l_04, group.yo_l_05, group.yo_l_06, group.yo_l_07, group.yo_l_08, group.yo_l_09, group.yo_l_10,\
-            group.yo_h_00, group.yo_h_01, group.yo_h_02, group.yo_h_03, group.yo_h_04, group.yo_h_05, group.yo_h_06, group.yo_h_07, group.yo_h_08, group.yo_h_09, group.yo_h_10]        
-        for ind, info in Constants.yo_dic.items():
-            if info['wage']==recipient.participant.wage and info['income']==recipient.participant.earning:
-                matched_ind = ind
-        transfer_income = decision_matrix[matched_ind]
+        if group.treatment==1:
+            decision_matrix = [group.yo_l_00, group.yo_l_01, group.yo_l_02, group.yo_l_03, group.yo_l_04, group.yo_l_05, group.yo_l_06, group.yo_l_07, group.yo_l_08, group.yo_l_09, group.yo_l_10,\
+                group.yo_h_00, group.yo_h_01, group.yo_h_02, group.yo_h_03, group.yo_h_04, group.yo_h_05, group.yo_h_06, group.yo_h_07, group.yo_h_08, group.yo_h_09, group.yo_h_10]        
+            for ind, info in Constants.yo_dic.items():
+                if info['wage']==recipient.participant.wage and info['income']==recipient.participant.earning:
+                    matched_ind = ind
+            transfer_income = decision_matrix[matched_ind]
 
-    elif group.treatment==2:
-        decision_matrix = [group.no_00, group.no_01, group.no_02, group.no_03, group.no_04, group.no_05, group.no_06, group.no_07, group.no_08, group.no_09, group.no_10, group.no_12, group.no_14, group.no_16, group.no_18, group.no_20]        
-        for ind, info in Constants.no_dic.items():
-            if info['income']==recipient.participant.earning:
-                matched_ind = ind
-        transfer_income = decision_matrix[matched_ind]
-    
-    group.final_transfer = transfer_income
+        elif group.treatment==2:
+            decision_matrix = [group.no_00, group.no_01, group.no_02, group.no_03, group.no_04, group.no_05, group.no_06, group.no_07, group.no_08, group.no_09, group.no_10, group.no_12, group.no_14, group.no_16, group.no_18, group.no_20]        
+            for ind, info in Constants.no_dic.items():
+                if info['income']==recipient.participant.earning:
+                    matched_ind = ind
+            transfer_income = decision_matrix[matched_ind]
+        
+        group.final_transfer = transfer_income
+        if dictator.is_dropout == False:
+            dictator.participant.payoff = dictator.participant.earning - transfer_income
+        else:
+            dictator.participant.payoff = 0
+        if recipient.is_dropout == False:
+            recipient.participant.payoff = recipient.participant.earning + transfer_income
+        else: 
+            recipient.participant.payoff = 0
+        
 
-    dictator.participant.payoff = dictator.participant.earning - transfer_income
-    recipient.participant.payoff = recipient.participant.earning + transfer_income
+
 
 # PAGES
 class GroupPage(WaitPage):
     group_by_arrival_time = True
      
     title_text = "We are matching you with another participant."
-    body_text = "Please wait..."  
+    body_text = "Please wait at most 10 minutes. "  
 
     def after_all_players_arrive(group: Group):
+        group.n_players = len(group.get_players())
         dictator = group.get_player_by_role(Constants.dictator_role)
-        recipient = group.get_player_by_role(Constants.recipient_role)
         group.treatment = dictator.participant.treatment
         group.more_high_wage = dictator.participant.more_high_wage
         group.dictator_earning = dictator.participant.earning
-        group.dictator_wage = dictator.participant.wage
-        group.recipient_earning = recipient.participant.earning
-        group.recipient_wage = recipient.participant.wage
-        group.n_players = len(group.get_players())
-        # for player in group.get_players():
-        #     player.participant.is_dropout = False  
+        group.dictator_wage = dictator.participant.wage        
+        if group.n_players==2:    
+            recipient = group.get_player_by_role(Constants.recipient_role)
+            group.recipient_earning = recipient.participant.earning
+            group.recipient_wage = recipient.participant.wage
+        
             
 
 class Decision_instruction(Page):
@@ -342,8 +355,14 @@ class Decision_instruction(Page):
         if player.is_dropout:
             return 1  # instant timeout, 1 second
         else:
-            return 1*60  
-           
+            return 2*60  
+    @staticmethod
+    def before_next_page(player, timeout_happened):
+        participant = player.participant
+        if timeout_happened:    
+            if player.is_dropout == False:
+                player.dropout_page = 'Decision_instruction'
+                player.is_dropout = True               
 
 class Decision_roleA_yo(Page):
     form_model = 'group'
@@ -351,7 +370,7 @@ class Decision_roleA_yo(Page):
         'yo_h_00', 'yo_h_01', 'yo_h_02', 'yo_h_03', 'yo_h_04', 'yo_h_05', 'yo_h_06', 'yo_h_07', 'yo_h_08', 'yo_h_09', 'yo_h_10']
     @staticmethod
     def is_displayed(player: Player):
-        return player.role == Constants.dictator_role and player.group.treatment == 1
+        return player.role == Constants.dictator_role and player.group.treatment == 1 and player.group.n_players == 2
     @staticmethod
     def get_timeout_seconds(player):
         # participant = player.participant
@@ -363,39 +382,50 @@ class Decision_roleA_yo(Page):
     def vars_for_template(player):
         participant = player.participant
         earning = participant.earning
+        if participant.more_high_wage == True:
+            p_lowwage = '25%'
+            p_highwage = '75%'
+        elif participant.more_high_wage == False:
+            p_lowwage = '75%'
+            p_highwage = '25%'        
         return dict(
-            earning=earning,
+            earning=earning, p_lowwage=p_lowwage,p_highwage=p_highwage
         )                    
     @staticmethod
     def before_next_page(player, timeout_happened):
-        participant = player.participant
+        group = player.group
         if timeout_happened:
-            choice_set = random.choice([round(i,1) for i in list(numpy.arange (0, player.participant.earning+0.1, 0.1))])
-            player.yo_l_00 = random.choice(choice_set)
-            player.yo_l_01 = random.choice(choice_set)
-            player.yo_l_02 = random.choice(choice_set)
-            player.yo_l_03 = random.choice(choice_set)
-            player.yo_l_04 = random.choice(choice_set)
-            player.yo_l_05 = random.choice(choice_set)
-            player.yo_l_06 = random.choice(choice_set)
-            player.yo_l_07 = random.choice(choice_set)
-            player.yo_l_08 = random.choice(choice_set)
-            player.yo_l_09 = random.choice(choice_set)
-            player.yo_l_10 = random.choice(choice_set)
-            player.yo_h_00 = random.choice(choice_set)
-            player.yo_h_01 = random.choice(choice_set)
-            player.yo_h_02 = random.choice(choice_set)
-            player.yo_h_03 = random.choice(choice_set)
-            player.yo_h_04 = random.choice(choice_set)
-            player.yo_h_05 = random.choice(choice_set)
-            player.yo_h_06 = random.choice(choice_set)
-            player.yo_h_07 = random.choice(choice_set)
-            player.yo_h_08 = random.choice(choice_set)
-            player.yo_h_09 = random.choice(choice_set)
-            player.yo_h_10 = random.choice(choice_set)
+            choice_set = currency_range(0,group.dictator_earning,0.1)
+            middle_indes = math.floor(len(choice_set)/2)-1
+            group.yo_l_00 = choice_set[middle_indes]
+            group.yo_l_01 = choice_set[middle_indes]
+            group.yo_l_02 = choice_set[middle_indes]
+            group.yo_l_03 = choice_set[middle_indes]
+            group.yo_l_04 = choice_set[middle_indes]
+            group.yo_l_05 = choice_set[middle_indes]
+            group.yo_l_06 = choice_set[middle_indes]
+            group.yo_l_07 = choice_set[middle_indes]
+            group.yo_l_08 = choice_set[middle_indes]
+            group.yo_l_09 = choice_set[middle_indes]
+            group.yo_l_10 = choice_set[middle_indes]
+            group.yo_h_00 = choice_set[middle_indes]
+            group.yo_h_01 = choice_set[middle_indes]
+            group.yo_h_02 = choice_set[middle_indes]
+            group.yo_h_03 = choice_set[middle_indes]
+            group.yo_h_04 = choice_set[middle_indes]
+            group.yo_h_05 = choice_set[middle_indes]
+            group.yo_h_06 = choice_set[middle_indes]
+            group.yo_h_07 = choice_set[middle_indes]
+            group.yo_h_08 = choice_set[middle_indes]
+            group.yo_h_09 = choice_set[middle_indes]
+            group.yo_h_10 = choice_set[middle_indes]
             if player.is_dropout == False:
                 player.dropout_page = 'Decision'
-                player.is_dropout = True      
+                player.is_dropout = True 
+    @staticmethod
+    def app_after_this_page(player, upcoming_apps):
+        if player.is_dropout == True: 
+            return 'end'                      
 
 class Decision_roleB_yo(Page):
     form_model = 'group'
@@ -403,7 +433,19 @@ class Decision_roleB_yo(Page):
         'g_yo_h_00', 'g_yo_h_01', 'g_yo_h_02', 'g_yo_h_03', 'g_yo_h_04', 'g_yo_h_05', 'g_yo_h_06', 'g_yo_h_07', 'g_yo_h_08', 'g_yo_h_09', 'g_yo_h_10']
     @staticmethod
     def is_displayed(player: Player):
-        return player.role == Constants.recipient_role  and player.group.treatment == 1
+        return player.role == Constants.recipient_role  and player.group.treatment == 1 and player.group.n_players == 2
+    @staticmethod
+    def vars_for_template(player):
+        participant = player.participant
+        if participant.more_high_wage == True:
+            p_lowwage = '25%'
+            p_highwage = '75%'
+        elif participant.more_high_wage == False:
+            p_lowwage = '75%'
+            p_highwage = '25%'        
+        return dict(
+            p_lowwage=p_lowwage,p_highwage=p_highwage
+        )          
     @staticmethod
     def get_timeout_seconds(player):
         participant = player.participant
@@ -418,14 +460,18 @@ class Decision_roleB_yo(Page):
         if timeout_happened:
             if player.is_dropout == False:
                 player.dropout_page = 'Decision'
-                player.is_dropout = True              
+                player.is_dropout = True   
+    @staticmethod
+    def app_after_this_page(player, upcoming_apps):
+        if player.is_dropout == True: 
+            return 'end'                              
 
 class Decision_roleA_no(Page):
     form_model = 'group'
     form_fields = ['no_00','no_01','no_02','no_03','no_04','no_05','no_06','no_07','no_08','no_09','no_10','no_12','no_14','no_16','no_18','no_20']
     @staticmethod
     def is_displayed(player: Player):
-        return player.role == Constants.dictator_role and player.group.treatment == 2
+        return player.role == Constants.dictator_role and player.group.treatment == 2 and player.group.n_players == 2
     @staticmethod
     def get_timeout_seconds(player):
         participant = player.participant
@@ -438,40 +484,64 @@ class Decision_roleA_no(Page):
     def vars_for_template(player):
         participant = player.participant
         earning = participant.earning
+        if participant.more_high_wage == True:
+            p_lowwage = '25%'
+            p_highwage = '75%'
+        elif participant.more_high_wage == False:
+            p_lowwage = '75%'
+            p_highwage = '25%'          
         return dict(
-            earning=earning,
-        )                    
+            earning=earning,p_lowwage=p_lowwage,p_highwage=p_highwage
+        )        
+                    
     @staticmethod
     def before_next_page(player, timeout_happened):
-        participant = player.participant
+        group = player.group
         if timeout_happened:
-            choice_set = random.choice([round(i,1) for i in list(numpy.arange (0, player.participant.earning+0.1, 0.1))])
-            player.no_00 = random.choice(choice_set)
-            player.no_01 = random.choice(choice_set)
-            player.no_02 = random.choice(choice_set)
-            player.no_03 = random.choice(choice_set)
-            player.no_04 = random.choice(choice_set)
-            player.no_05 = random.choice(choice_set)
-            player.no_06 = random.choice(choice_set)
-            player.no_07 = random.choice(choice_set)
-            player.no_08 = random.choice(choice_set)
-            player.no_09 = random.choice(choice_set)
-            player.no_10 = random.choice(choice_set)
-            player.no_12 = random.choice(choice_set)
-            player.no_14 = random.choice(choice_set)
-            player.no_16 = random.choice(choice_set)
-            player.no_18 = random.choice(choice_set)
-            player.no_20 = random.choice(choice_set)
+            choice_set = currency_range(0,group.dictator_earning,0.1)
+            middle_indes = math.floor(len(choice_set)/2)-1
+            group.no_00 = choice_set[middle_indes]
+            group.no_01 = choice_set[middle_indes]
+            group.no_02 = choice_set[middle_indes]
+            group.no_03 = choice_set[middle_indes]
+            group.no_04 = choice_set[middle_indes]
+            group.no_05 = choice_set[middle_indes]
+            group.no_06 = choice_set[middle_indes]
+            group.no_07 = choice_set[middle_indes]
+            group.no_08 = choice_set[middle_indes]
+            group.no_09 = choice_set[middle_indes]
+            group.no_10 = choice_set[middle_indes]
+            group.no_12 = choice_set[middle_indes]
+            group.no_14 = choice_set[middle_indes]
+            group.no_16 = choice_set[middle_indes]
+            group.no_18 = choice_set[middle_indes]
+            group.no_20 = choice_set[middle_indes]
             if player.is_dropout == False:
                 player.dropout_page = 'Decision'
-                player.is_dropout = True             
+                player.is_dropout = True   
+    @staticmethod
+    def app_after_this_page(player, upcoming_apps):
+        if player.is_dropout == True: 
+            return 'end'                             
 
 class Decision_roleB_no(Page):
     form_model = 'group'
     form_fields = ['g_no_00','g_no_01','g_no_02','g_no_03','g_no_04','g_no_05','g_no_06','g_no_07','g_no_08','g_no_09','g_no_10','g_no_12','g_no_14','g_no_16','g_no_18','g_no_20']
     @staticmethod
     def is_displayed(player: Player):
-        return player.role == Constants.recipient_role  and player.group.treatment == 2  
+        return player.role == Constants.recipient_role  and player.group.treatment == 2 and player.group.n_players == 2
+    @staticmethod
+    def vars_for_template(player):
+        participant = player.participant
+        if participant.more_high_wage == True:
+            p_lowwage = '25%'
+            p_highwage = '75%'
+        elif participant.more_high_wage == False:
+            p_lowwage = '75%'
+            p_highwage = '25%'          
+        return dict(
+            p_lowwage=p_lowwage,p_highwage=p_highwage
+        )           
     @staticmethod
     def get_timeout_seconds(player):
         participant = player.participant
@@ -486,18 +556,59 @@ class Decision_roleB_no(Page):
         if timeout_happened:
             if player.is_dropout == False:
                 player.dropout_page = 'Decision'
-                player.is_dropout = True                     
+                player.is_dropout = True  
+    @staticmethod
+    def app_after_this_page(player, upcoming_apps):
+        if player.is_dropout == True: 
+            return 'end'                       
 
-class Wait_for_decision(WaitPage):
-    title_text = "Your partner is making theie decision"
-    body_text = "Thank you for your patient."     
-    
-    after_all_players_arrive = 'set_payoffs'
 
-class Belief(Page):
-    form_model = 'player'
-    form_fields = ['believe_income_00','believe_income_01','believe_income_02','believe_income_03','believe_income_04','believe_income_05','believe_income_06','believe_income_07','believe_income_08','believe_income_09','believe_income_10','believe_income_12','believe_income_14','believe_income_16','believe_income_18','believe_income_20']
+class Decision_single_yo(Page):
+    form_model = 'group'
+    form_fields = ['yo_l_00', 'yo_l_01', 'yo_l_02', 'yo_l_03', 'yo_l_04', 'yo_l_05', 'yo_l_06', 'yo_l_07', 'yo_l_08', 'yo_l_09', 'yo_l_10',\
+        'yo_h_00', 'yo_h_01', 'yo_h_02', 'yo_h_03', 'yo_h_04', 'yo_h_05', 'yo_h_06', 'yo_h_07', 'yo_h_08', 'yo_h_09', 'yo_h_10']
+    @staticmethod
+    def is_displayed(player: Player):
+        return player.group.n_players<2 and player.group.treatment == 1
+    @staticmethod
+    def get_timeout_seconds(player):
+        # participant = player.participant
+        if player.is_dropout:
+            return 1  # instant timeout, 1 second
+        else:
+            return 10*60   
+    @staticmethod
+    def vars_for_template(player):
+        participant = player.participant
+        earning = participant.earning
+        if participant.more_high_wage == True:
+            p_lowwage = '25%'
+            p_highwage = '75%'
+        elif participant.more_high_wage == False:
+            p_lowwage = '75%'
+            p_highwage = '25%'          
+        return dict(
+            earning=earning,p_lowwage=p_lowwage,p_highwage=p_highwage
+        )                
+           
+    @staticmethod
+    def before_next_page(player, timeout_happened):
+        participant = player.participant
+        if timeout_happened:
+            if player.is_dropout == False:
+                player.dropout_page = 'Decision'
+                player.is_dropout = True  
+    @staticmethod
+    def app_after_this_page(player, upcoming_apps):
+        if player.is_dropout == True: 
+            return 'end'                      
 
+class Decision_single_no(Page):
+    form_model = 'group'
+    form_fields = ['no_00','no_01','no_02','no_03','no_04','no_05','no_06','no_07','no_08','no_09','no_10','no_12','no_14','no_16','no_18','no_20']
+    @staticmethod
+    def is_displayed(player: Player):
+        return player.group.n_players<2 and player.group.treatment == 2
     @staticmethod
     def get_timeout_seconds(player):
         participant = player.participant
@@ -505,7 +616,62 @@ class Belief(Page):
         if player.is_dropout:
             return 1  # instant timeout, 1 second
         else:
-            return 10*60          
+            return 10*60    
+    @staticmethod
+    def vars_for_template(player):
+        participant = player.participant
+        earning = participant.earning
+        if participant.more_high_wage == True:
+            p_lowwage = '25%'
+            p_highwage = '75%'
+        elif participant.more_high_wage == False:
+            p_lowwage = '75%'
+            p_highwage = '25%'          
+        return dict(
+            earning=earning,p_lowwage=p_lowwage,p_highwage=p_highwage
+        )      
+                         
+    @staticmethod
+    def before_next_page(player, timeout_happened):
+        participant = player.participant
+        if timeout_happened:
+            if player.is_dropout == False:
+                player.dropout_page = 'Decision'
+                player.is_dropout = True   
+    @staticmethod
+    def app_after_this_page(player, upcoming_apps):
+        if player.is_dropout == True: 
+            return 'end'                   
+
+class Wait_for_decision(WaitPage):
+    title_text = "Your partner is making their decision"
+    body_text = "Thank you for your patience."     
+    
+    after_all_players_arrive = 'set_payoffs'
+
+class Belief(Page):
+    form_model = 'player'
+    form_fields = ['believe_income_00','believe_income_01','believe_income_02','believe_income_03','believe_income_04','believe_income_05','believe_income_06','believe_income_07','believe_income_08','believe_income_09','believe_income_10','believe_income_12','believe_income_14','believe_income_16','believe_income_18','believe_income_20']
+    @staticmethod
+    def vars_for_template(player):
+        participant = player.participant
+        if participant.more_high_wage == True:
+            p_lowwage = '25%'
+            p_highwage = '75%'
+        elif participant.more_high_wage == False:
+            p_lowwage = '75%'
+            p_highwage = '25%'          
+        return dict(
+            p_lowwage=p_lowwage,p_highwage=p_highwage
+        )    
+    @staticmethod
+    def get_timeout_seconds(player):
+        participant = player.participant
+
+        if player.is_dropout:
+            return 1  # instant timeout, 1 second
+        else:
+            return 60*60          
     @staticmethod
     def before_next_page(player, timeout_happened):
         participant = player.participant
@@ -525,7 +691,7 @@ class Post_survey(Page):
         if player.is_dropout:
             return 1  # instant timeout, 1 second
         else:
-            return 5*60          
+            return 60*60          
     @staticmethod
     def before_next_page(player, timeout_happened):
         participant = player.participant
@@ -535,6 +701,9 @@ class Post_survey(Page):
                 player.is_dropout = True           
     
 class Results(Page):
+    # @staticmethod
+    # def is_displayed(player: Player):
+    #     return player.is_dropout==False   
     @staticmethod
     def vars_for_template(player):
         participant = player.participant
@@ -543,7 +712,12 @@ class Results(Page):
         return dict(
             payoff_real_cu=payoff_real_cu,
             total_earning=total_earning,
-        )        
+        )      
+
+class Feedback(Page):
+    form_model = 'player'
+    form_fields = ['feedback']
 
 
-page_sequence = [GroupPage, Decision_instruction, Decision_roleA_yo, Decision_roleB_yo, Decision_roleA_no, Decision_roleB_no, Wait_for_decision, Belief, Post_survey, Results]
+
+page_sequence = [GroupPage, Decision_instruction, Decision_roleA_yo, Decision_roleB_yo, Decision_roleA_no, Decision_roleB_no, Decision_single_yo, Decision_single_no, Wait_for_decision, Belief, Post_survey, Results, Feedback]

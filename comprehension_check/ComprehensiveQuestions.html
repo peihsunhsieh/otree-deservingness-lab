@@ -3,10 +3,23 @@ Comprehension questions:
 {{ endblock }}
 {{ block content }}
 <div style="text-align: left;">Before the experiment starts, we want to ask you some comprehension questions about the procedure to 
-    make sure that you understood everything. <u>If you answer three or more questions wrong, you will not be able to continue the 
-        study.</u> To ensure that you have a correct understanding of the decision-making environment that you face in this study, we will give you the 
+    make sure that you understood everything. <strong>If you answer three or more questions wrong, you will not be able to continue the 
+        study.</strong> To ensure that you have a correct understanding of the decision-making environment that you face in this study, we will give you the 
         correct answer for each question whether or not your initial answer is correct. <br></div>
     {{formfields}}
+
     {{ next_button }}
+
+<p>You can check the instruction here.</p>
+
+{{ if player.treatment == 1 }}
+    {{ for item in Constants.instructions.1 }}
+    {{ include  item}}
+    {{ endfor }}
+{{ else }}
+    {{ for item in Constants.instructions.2 }}
+    {{ include  item}}
+    {{ endfor }}
+{{ endif }}    
 
 {{ endblock }}

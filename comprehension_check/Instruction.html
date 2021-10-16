@@ -4,31 +4,27 @@
 {{ block content }}
 <div style="text-align: left;">Welcome! <br></div><div style="text-align: left;"><br></div><div style="text-align: left;">The following 
     are the <b>INSTRUCTIONS</b> of the study. <u><b>Please read them very carefully, as they will tell you how to earn bonus money! 
-        Every participant with whom you may interact during this study has received the same instructions.
+        Every participant with whom you may interact during this study has received the same instructions. <font style="color:red">We will
+             ask you some questions about the instructions later, if you answer too many questions wrong, you will not be able to continue the study.</font>
     </b></u><br></div><div style="text-align: left;"><br></div><div style="text-align: left;">Remember, just for <b>completing</b> the study 
         today, you will earn $0.50, no matter what else happens.<br></div><br>
 <p style="text-align: justify;">The study is composed of the following stages.</p>
 
-{{ if player.treatment == 1 }}
-    {{ for item in Constants.instructions.1 }}
-    {{ include  item}}
-    {{ endfor }}
-{{ else }}
-    {{ for item in Constants.instructions.2 }}
-    {{ include  item}}
-    {{ endfor }}
-{{ endif }}
+<img src="{{ static 'comprehension_check/flow_chart.jpg' }}"/>
+
 
 <button class="btn btn-primary" style="display: none" id="next-button">Next</button>
 
 {#
 The following is the next button occurs afere 10 seconds.
-#}
 
+#}
 <script>
     setTimeout(function() {
         document.getElementById('next-button').style.display = 'block';
-    }, 10 * 1000);
+    }, 3 * 1000);
 </script>
+
+
 
 {{ endblock }}

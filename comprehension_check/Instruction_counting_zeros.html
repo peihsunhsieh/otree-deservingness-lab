@@ -1,0 +1,23 @@
+{{ block title }}
+    Instruction
+{{ endblock }}
+{{ block content }}
+
+{{ include  '_templates/global/Instruction_counting_zeros.html'}}   
+
+
+
+<button class="btn btn-primary" style="display: none" id="next-button">Next</button>
+
+{#
+The following is the next button occurs afere 10 seconds.
+
+#}
+<script>
+    setTimeout(function() {
+        document.getElementById('next-button').style.display = 'block';
+    }, 1 * 1000);
+</script>
+
+
+{{ endblock }}

@@ -2,12 +2,280 @@
     Make your guess for more bonus
 {{ endblock }}
 {{ block content }}
-Please guess the pecentage of the participants whose wage rate per table is 10 cents for each possible bonus from the counting task. 
-<b>After the session of the study is completed, we will random choose one of the following question, and if your answer is within plus 
-    or minus 5, you will get extra $0.5. </b>
+<p> Guess the pecentage of the participants whose wage rate per table is 10 cents for each possible bonus from the counting task. 
+<strong>After the session of the study is completed, we will randomly choose one of the following questions, and if your answer is within plus 
+    or minus 5, you will get extra $0.5. </strong>
 
-{{ formfields }}
+<p>For each of the following counting task earning outcomes, please provide your best estimate for the percentage of the participants assigned with a wage rate of $0.1 per table. For example, for the first question, if 100 participants earned $0 from the counting task, and you guess that 45 of these participants were assigned with a wage of $0.1 per table, please answer 45. </p>
 
-{{ next_button }}
+<p><strong>Everyone has a {{p_lowwage}} probability of being assigned $0.1 per table as the wage rate and {{p_highwage}} probability of being 
+        assigned $0.2 per table as the wage rate.</strong> </p>
+
+{{ form.believe_income_00.label }}
+<div>
+<input type="range" name="believe_income_00" id="believe_income_00_id" min="0" max="100" oninput="ifclick00(this)">
+<span id="description00"></span>
+</div>
+
+{{ form.believe_income_01.label }}
+<div>
+<input type="range" name="believe_income_01" min="0" max="100" oninput="ifclick01(this)">
+<span id="description01"></span>
+</div>
+{{ form.believe_income_02.label }}
+<div>
+<input type="range" name="believe_income_02" min="0" max="100" oninput="ifclick02(this)">
+<span id="description02"></span>
+</div>
+{{ form.believe_income_03.label }}
+<div>
+
+<input type="range" name="believe_income_03" min="0" max="100" oninput="ifclick03(this)">
+<span id="description03"></span>
+</div>
+{{ form.believe_income_04.label }}
+<div>
+
+<input type="range" name="believe_income_04" min="0" max="100" oninput="ifclick04(this)">
+<span id="description04"></span>
+</div>
+{{ form.believe_income_05.label }}
+<div>
+
+<input type="range" name="believe_income_05" min="0" max="100" oninput="ifclick05(this)">
+<span id="description05"></span>
+</div>
+{{ form.believe_income_06.label }}
+<div>
+
+<input type="range" name="believe_income_06" min="0" max="100" oninput="ifclick06(this)">
+<span id="description06"></span>
+</div>
+{{ form.believe_income_07.label }}
+<div>
+
+<input type="range" name="believe_income_07" min="0" max="100" oninput="ifclick07(this)">
+<span id="description07"></span>
+</div>
+{{ form.believe_income_08.label }}
+<div>
+
+<input type="range" name="believe_income_08" min="0" max="100" oninput="ifclick08(this)">
+<span id="description08"></span>
+</div>
+{{ form.believe_income_09.label }}
+<div>
+
+<input type="range" name="believe_income_09" min="0" max="100" oninput="ifclick09(this)">
+<span id="description09"></span>
+</div>
+{{ form.believe_income_10.label }}
+<div>
+
+<input type="range" name="believe_income_10" min="0" max="100" oninput="ifclick10(this)">
+<span id="description10"></span>
+</div>
+{{ form.believe_income_12.label }}
+<div>
+
+<input type="range" name="believe_income_12" min="0" max="100" oninput="ifclick12(this)">
+<span id="description12"></span>
+</div>
+{{ form.believe_income_14.label }}
+<div>
+
+<input type="range" name="believe_income_14" min="0" max="100" oninput="ifclick14(this)">
+<span id="description14"></span>
+</div>
+{{ form.believe_income_16.label }}
+<div>
+
+<input type="range" name="believe_income_16" min="0" max="100" oninput="ifclick16(this)">
+<span id="description16"></span>
+</div>
+{{ form.believe_income_18.label }}
+<div>
+
+<input type="range" name="believe_income_18" min="0" max="100" oninput="ifclick18(this)">
+<span id="description18"></span>
+</div>
+{{ form.believe_income_20.label }}
+<div>
+
+<input type="range" name="believe_income_20" min="0" max="100" oninput="ifclick20(this)">
+<span id="description20"></span>
+</div>
+
+
+<button class="btn btn-primary" style="display: none" id="next-button">Next</button>
+
+<script>
+let clicked_or_not = [false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false];
+let checkall = arr => arr.every(Boolean);
+
+let description00 = document.getElementById('description00');
+let description01 = document.getElementById('description01');
+let description02 = document.getElementById('description02');
+let description03 = document.getElementById('description03');
+let description04 = document.getElementById('description04');
+let description05 = document.getElementById('description05');
+let description06 = document.getElementById('description06');
+let description07 = document.getElementById('description07');
+let description08 = document.getElementById('description08');
+let description09 = document.getElementById('description09');
+let description10 = document.getElementById('description10');
+let description12 = document.getElementById('description12');
+let description14 = document.getElementById('description14');
+let description16 = document.getElementById('description16');
+let description18 = document.getElementById('description18');
+let description20 = document.getElementById('description20');
+
+function ifclick00(input) {
+    description00.innerText = parseInt(input.value);
+    clicked_or_not[0] = true;
+    all_clicked = checkall(clicked_or_not);
+    if(all_clicked==true){
+        document.getElementById('next-button').style.display = 'block';
+    }
+}
+
+function ifclick01(input) {
+    description01.innerText = parseInt(input.value);
+    clicked_or_not[1] = true;
+    all_clicked = checkall(clicked_or_not);
+    if(all_clicked==true){
+        document.getElementById('next-button').style.display = 'block';
+    }
+}
+
+function ifclick02(input) {
+    description02.innerText = parseInt(input.value);
+    clicked_or_not[2] = true;
+    all_clicked = checkall(clicked_or_not);
+    if(all_clicked==true){
+        document.getElementById('next-button').style.display = 'block';
+    }
+}
+
+function ifclick03(input) {
+    description03.innerText = parseInt(input.value);
+    clicked_or_not[3] = true;
+    all_clicked = checkall(clicked_or_not);
+    if(all_clicked==true){
+        document.getElementById('next-button').style.display = 'block';
+    }
+}
+
+function ifclick04(input) {
+    description04.innerText = parseInt(input.value);
+    clicked_or_not[4] = true;
+    all_clicked = checkall(clicked_or_not);
+    if(all_clicked==true){
+        document.getElementById('next-button').style.display = 'block';
+    }
+}
+
+function ifclick05(input) {
+    description05.innerText = parseInt(input.value);
+    clicked_or_not[5] = true;
+    all_clicked = checkall(clicked_or_not);
+    if(all_clicked==true){
+        document.getElementById('next-button').style.display = 'block';
+    }
+}
+
+function ifclick06(input) {
+    description06.innerText = parseInt(input.value);
+    clicked_or_not[6] = true;
+    all_clicked = checkall(clicked_or_not);
+    if(all_clicked==true){
+        document.getElementById('next-button').style.display = 'block';
+    }
+}
+
+function ifclick07(input) {
+    description07.innerText = parseInt(input.value);
+    clicked_or_not[7] = true;
+    all_clicked = checkall(clicked_or_not);
+    if(all_clicked==true){
+        document.getElementById('next-button').style.display = 'block';
+    }
+}
+
+function ifclick08(input) {
+    description08.innerText = parseInt(input.value);
+    clicked_or_not[8] = true;
+    all_clicked = checkall(clicked_or_not);
+    if(all_clicked==true){
+        document.getElementById('next-button').style.display = 'block';
+    }
+}
+
+function ifclick09(input) {
+    description09.innerText = parseInt(input.value);
+    clicked_or_not[9] = true;
+    all_clicked = checkall(clicked_or_not);
+    if(all_clicked==true){
+        document.getElementById('next-button').style.display = 'block';
+    }
+}
+
+function ifclick10(input) {
+    description10.innerText = parseInt(input.value);
+    clicked_or_not[10] = true;
+    all_clicked = checkall(clicked_or_not);
+    if(all_clicked==true){
+        document.getElementById('next-button').style.display = 'block';
+    }
+}
+
+function ifclick12(input) {
+    description12.innerText = parseInt(input.value);
+    clicked_or_not[11] = true;
+    all_clicked = checkall(clicked_or_not);
+    if(all_clicked==true){
+        document.getElementById('next-button').style.display = 'block';
+    }
+}
+
+function ifclick14(input) {
+    description14.innerText = parseInt(input.value);
+    clicked_or_not[12] = true;
+    all_clicked = checkall(clicked_or_not);
+    if(all_clicked==true){
+        document.getElementById('next-button').style.display = 'block';
+    }
+}
+
+function ifclick16(input) {
+    description16.innerText = parseInt(input.value);
+    clicked_or_not[13] = true;
+    all_clicked = checkall(clicked_or_not);
+    if(all_clicked==true){
+        document.getElementById('next-button').style.display = 'block';
+    }
+}
+
+function ifclick18(input) {
+    description18.innerText = parseInt(input.value);
+    clicked_or_not[14] = true;
+    all_clicked = checkall(clicked_or_not);
+    if(all_clicked==true){
+        document.getElementById('next-button').style.display = 'block';
+    }
+}
+
+function ifclick20(input) {
+    description20.innerText = parseInt(input.value);
+    clicked_or_not[15] = true;
+    all_clicked = checkall(clicked_or_not);
+    if(all_clicked==true){
+        document.getElementById('next-button').style.display = 'block';
+    }
+}
+
+
+
+</script>
 
 {{ endblock }}

@@ -2,13 +2,18 @@
     Instruction
 {{ endblock }}
 {{ block content }}
-    Now you have matched another participant. You are the {{ player.role }}.
+<p><strong>Start from this page, there is a time limit on each page. You will be considered as dropping out the study if the time runs out.</strong></p>
 
+{{ if group.n_players == 2 }}
     {{ if player.role == "role A" }}
-        You are going to make decisions about how much you want to give to the pariticipant matched with you. Your decision will be realized.
+        Now you have matched another participant. You are the <strong>{{ player.role }}</strong>. You are going to make decisions about how much you want to give to the pariticipant matched with you. Your decision will be realized.
     {{ else }}
-        You are going to guess how much the pariticipant matched with you will give you.
+        Now you have matched another participant. You are the <strong>{{ player.role }}</strong>. You are going to guess how much the pariticipant matched with you will give you.
     {{ endif }}
+{{ else }}
+    Sorry we are not able to match a participant with you at this moment, we still want to know how you would make decisions.
+{{ endif }}
+
 
     {{ next_button }}
 

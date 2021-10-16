@@ -4,28 +4,31 @@
 
 {{ block content }}
 
-{{ if player.participant.treatment == 1}}
+{{ if group.n_players == 2 }}
+    {{ if player.participant.treatment == 1}}
 
-    {{ if player.role == "role A"}}
-        The pariticpant matched with you earned {{group.recipient_earning|cu}} with {{group.recipient_wage|cu}} per table. You gave the 
-        participant {{group.final_transfer|cu}}. 
-    {{else}}
-        The pariticpant matched with you earned {{group.dictator_earning|cu}} with {{group.dictator_wage|cu}} per table. You received 
-        {{group.final_transfer|cu}} from the participant.     
+        {{ if player.role == "role A"}}
+            The pariticpant matched with you earned {{group.recipient_earning|cu}} with {{group.recipient_wage|cu}} per table. You gave the 
+            participant {{group.final_transfer|cu}}. 
+        {{else}}
+            The pariticpant matched with you earned {{group.dictator_earning|cu}} with {{group.dictator_wage|cu}} per table. You received 
+            {{group.final_transfer|cu}} from the participant.     
+        {{ endif }}
+
+    {{ else }}
+
+        {{ if player.role == "role A"}}
+            The pariticpant matched with you earned {{group.recipient_earning|cu}}. You gave the participant {{group.final_transfer|cu}}. 
+        {{else}}
+            The pariticpant matched with you earned {{group.dictator_earning|cu}}. You received {{group.final_transfer|cu}} from the participant.         
+        {{ endif }}
+
     {{ endif }}
-
-{{ else }}
-
-    {{ if player.role == "role A"}}
-        The pariticpant matched with you earned {{group.recipient_earning|cu}}. You gave the participant {{group.final_transfer|cu}}. 
-    {{else}}
-        The pariticpant matched with you earned {{group.dictator_earning|cu}}. You received {{group.final_transfer|cu}} from the participant.         
-    {{ endif }}
-
-{{ endif }}
+{{ endif }}    
 
 Your bonus is {{payoff_real_cu|cu}}, plus the participation fee is {{total_earning|cu}}. After the session of the study is completed, we will
-send the extra payment for your guess about the pecentage of the participants soon if you guess the one question selected.
+send the extra payment for your guess about the pecentage of the participants soon if you were correct in the selected question.
+
 
     {{ next_button }}
 {{ endblock }}

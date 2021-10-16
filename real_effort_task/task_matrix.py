@@ -1,5 +1,5 @@
 from pathlib import Path
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageFont
 import random
 
 WIDTH = 450
@@ -34,8 +34,9 @@ def render_image(puzzle):
     init_x = 10
     init_y = 10
     seq = list(puzzle.text)
+    font_size = ImageFont.truetype(font='_static/global/arial.ttf', size=22)
     for i,z in zip(range(len(seq)),seq):
         pos = divmod(i,15)
-        draw.text((init_x+pos[1]*30,init_y+pos[0]*30), z,fill ="black", anchor="mm")
+        draw.text((init_x+pos[1]*30,init_y+pos[0]*30), z,fill ="black", anchor="mm", font=font_size)
 
     return image
