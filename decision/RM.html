@@ -1,0 +1,30 @@
+
+{{ block content }}
+
+<div><span style="font-size:16px;"><span class="_5yl5"><span style="color:#c0392b;"><strong>ATTENTION: TO GET PAID</strong></span><br>
+    <br>
+    <p>The survey is now complete! Your earnings will be calculated shortly and we will remit your payment through Amazon's Mechanical 
+    Turk. Please enter the following code into Mechanical Turk to receive your payment:</p> 
+    
+    <p><strong>{{confirmation_code}}</strong> </p>
+    
+    <p>Please ensure you have entered the above code into MTurk correctly. This code is the only way we can verify you participated in 
+    the study and ensure we pay you the correct bonus. Without the correct code, we cannot pay you a bonus. Thanks for participating!&nbsp;</p></span></span></div>
+    
+    <div>&nbsp;</div>
+
+    <button class="btn btn-primary" style="display: none" id="next-button">Next</button>
+
+    {#
+    The following is the next button occurs afere 10 seconds.
+    #}
+    
+    <script>
+        setTimeout(function() {
+            document.getElementById('next-button').style.display = 'block';
+        }, 3 * 1000);
+    </script>
+
+{{ endblock }}
+
+

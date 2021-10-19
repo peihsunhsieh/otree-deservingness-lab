@@ -16,7 +16,12 @@ SESSION_CONFIGS = [
         more_high_wage = True,
         treatment = 2,
         # use_browser_bots=True
-    ),    
+    ),
+    dict(
+        name='randomization',
+        app_sequence=['welcome_and_consent_form','pre_questionnaire','comprehension_check','real_effort_task','decision','end'],
+        num_demo_participants=2,
+    ),
     
 ]
 

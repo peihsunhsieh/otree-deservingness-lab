@@ -1,6 +1,7 @@
 from otree.api import *
 import random
 import math
+import string
 
 doc = """
 Your app description
@@ -225,7 +226,7 @@ def make_belief_field(income):
     return models.IntegerField(
         min=0,
         max=100,
-        label=f'What percentage of participants who earned ${income} were assigned a wage of $0.1 per table? (from 0 to 100)',
+        label=f'What percentage of participants who earned ${income} do you think were assigned a wage of $0.2 per table? (from 0 to 100)',
     )    
 
 class Player(BasePlayer):
@@ -260,6 +261,13 @@ class Player(BasePlayer):
     )    
     
     feedback = models.LongStringField(label='Please let us know how do you make your decisions.',blank=True)
+    confirmation_code = models.StringField()
+
+def get_random_string(length):
+    # With combination of lower and upper case
+    result_str = ''.join(random.choice(string.ascii_letters) for i in range(length))
+    # print random string
+    return result_str
 
 
 def waiting_too_long(player):
@@ -717,7 +725,20 @@ class Results(Page):
 class Feedback(Page):
     form_model = 'player'
     form_fields = ['feedback']
+    # @staticmethod
+    # def before_next_page(player, timeout_happened):
+    #     player.confirmation_code = get_random_string(8)
+           
+
+class RM(Page):
+    @staticmethod
+    def vars_for_template(player):
+        participant = player.participant
+        confirmation_code = participant.code
+        return dict(
+            confirmation_code=confirmation_code,
+        )    
 
 
 
-page_sequence = [GroupPage, Decision_instruction, Decision_roleA_yo, Decision_roleB_yo, Decision_roleA_no, Decision_roleB_no, Decision_single_yo, Decision_single_no, Wait_for_decision, Belief, Post_survey, Results, Feedback]
+page_sequence = [GroupPage, Decision_instruction, Decision_roleA_yo, Decision_roleB_yo, Decision_roleA_no, Decision_roleB_no, Decision_single_yo, Decision_single_no, Wait_for_decision, Belief, Post_survey, Results, Feedback, RM]
