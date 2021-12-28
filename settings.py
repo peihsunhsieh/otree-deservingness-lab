@@ -2,21 +2,19 @@ from os import environ
 
 SESSION_CONFIGS = [
     dict(
-        name='deservingness_observable',
+        name='Observable',
         app_sequence=['welcome_and_consent_form','pre_questionnaire','comprehension_check','real_effort_task','decision','end'],
+        more_high_wage=True,
+        treatment=1,
         num_demo_participants=2,
-        more_high_wage = True,
-        treatment = 1,
-        # use_browser_bots=True
-    ),
+    ),   
     dict(
-        name='deservingness_unobservable',
+        name='Unobservable',
         app_sequence=['welcome_and_consent_form','pre_questionnaire','comprehension_check','real_effort_task','decision','end'],
+        more_high_wage=True,
+        treatment=2,
         num_demo_participants=2,
-        more_high_wage = True,
-        treatment = 2,
-        # use_browser_bots=True
-    ),
+    ),         
     dict(
         name='randomization',
         app_sequence=['welcome_and_consent_form','pre_questionnaire','comprehension_check','real_effort_task','decision','end'],
@@ -32,21 +30,10 @@ SESSION_CONFIGS = [
 
 SESSION_CONFIG_DEFAULTS = dict(
     real_world_currency_per_point=1.00, participation_fee=0.50, doc="",
-    mturk_hit_settings=dict(
-    keywords='bonus, study',
-    title='Decision-making and effort',
-    description='Participate in an experimental research study that involves a group interaction. You could earn $0.5 show-up fee. Bonus payments will be available and will depend on what happens during the study!',
-    frame_height=500,
-    template='global/mturk_template.html',
-    minutes_allotted_per_assignment=60,
-    expiration_hours=7 * 24,
-    qualification_requirements=[]
-    # grant_qualification_id='YOUR_QUALIFICATION_ID_HERE', # to prevent retakes
-),
 )
 
 PARTICIPANT_FIELDS = ['tax_status','consent','more_high_wage','treatment','wage','earning','wait_page_arrival','n_players','is_dropout','dropout_page']
-SESSION_FIELDS = []
+SESSION_FIELDS = ['low_wage_rate','high_wage_rate']
 
 # ISO-639 code
 # for example: de, fr, ja, ko, zh-hans

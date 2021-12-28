@@ -2,7 +2,7 @@ from otree.api import *
 
 
 doc = """
-Your app description
+This app is for the welcome page and the consent form.
 """
 
 
@@ -35,7 +35,6 @@ class Consent_form(Page):
     @staticmethod
     def before_next_page(player: Player, timeout_happened):
         participant = player.participant
-        # add 'tax_status' and 'consent' to PARTICIPANT_FIELDS in setting.py
         participant.tax_status = player.tax_status    
         participant.consent = player.consent    
 

@@ -3,14 +3,17 @@ from otree.api import *
 import random
 
 doc = """
-Your app description
+This app includes the instruction and the comprehension check.
 """
 
 
 class Constants(BaseConstants):
-    name_in_url = 'comprehension_check'
+    name_in_url = 'instruction_and_quiz'
     players_per_group = None
     num_rounds = 1
+    low_wage_rate = 0.1
+    high_wage_rate = 0.2
+    # 1 is the instruction for the obervble condition, 2 is the instruction for the unobervble condition
     instructions = {1:['_templates/global/Instruction_comprehension_questions.html',
     '_templates/global/Instruction_wage_rate_assignment.html',
     '_templates/global/Instruction_counting_zeros.html',
@@ -37,9 +40,10 @@ class Group(BaseGroup):
 
 
 class Player(BasePlayer):
-    failed_too_many = models.BooleanField(initial=False)
-    more_high_wage = models.BooleanField()
+    failed_too_many = models.BooleanField(initial=False) # if a subject failed more than 3 questions in a quiz
+    more_high_wage = models.BooleanField() # False: 75% of the low-wage and 25% of the high-wage; True: 25% of the low-wage and 25% of the high-wage
     treatment = models.IntegerField() # 1: observable, 2: unobservable_free_effort, 3: unobservable
+    # Comprehension check questions
     cc1 = models.IntegerField(
         choices=[
             [1, 'Yes'],
@@ -50,9 +54,9 @@ class Player(BasePlayer):
     )  
     cc2 = models.IntegerField(
         choices=[
-            [1, '10 cents'],
-            [2, '20 cents'],
-            [3, '10 cents or 20 cents, which will be randomly assigned in the wage rate assignment stage.'],
+            [1, f'${Constants.low_wage_rate}'],
+            [2, f'${Constants.high_wage_rate}'],
+            [3, f'${Constants.low_wage_rate} or ${Constants.high_wage_rate}, which will be randomly assigned in the wage rate assignment stage.'],
         ],
         label="How much is the wage per table in the counting task stage?",
         widget=widgets.RadioSelect
@@ -63,7 +67,7 @@ class Player(BasePlayer):
             [2, '50%'],
             [3, '75%'],
         ],
-        label="What is the probability of being assigned 10 cents as the bonus per table in the counting task stage?",
+        label="What is the probability of being assigned $0.1 as the bonus per table in the counting task stage?",
         widget=widgets.RadioSelect
     )  
     cc4 = models.IntegerField(
@@ -73,20 +77,11 @@ class Player(BasePlayer):
             [3, '$2'],
             [4, '$2.5'],
         ],
-        label="If your wage rate is 20 cents per table, what is the maximum bonus you could earn from the counting task?",
+        label="If your wage rate is $0.2 per table, what is the maximum bonus you could earn from the counting task?",
         widget=widgets.RadioSelect
-    )  
-    cc4_nonfree = models.IntegerField(
-        choices=[
-            [1, '$1'],
-            [2, '$1.5'],
-            [3, '$2'],
-            [4, 'It depends on what I am assigned.'],
-        ],
-        label="If your wage rate is 20 cents per table, what is the maximum bonus you could earn from the counting task?",
-        widget=widgets.RadioSelect
-    )        
+    )      
 
+    # If a subject answers a question "wrong"
     cc1_correct = models.IntegerField(initial=0)
     cc2_correct = models.IntegerField(initial=0)
     cc3_correct = models.IntegerField(initial=0)
@@ -95,7 +90,9 @@ class Player(BasePlayer):
  
 
 def creating_session(subsession):
-    # randomize to treatments
+    subsession.session.low_wage_rate = Constants.low_wage_rate
+    subsession.session.high_wage_rate = Constants.high_wage_rate
+    # block randomization for more_highwage X observability
     import itertools
     treatments = itertools.cycle(
         itertools.product([True, False], [1, 2])
@@ -114,132 +111,146 @@ def creating_session(subsession):
             player.participant.treatment = player.treatment
     
 
+def vars_for_wage_distribution(more_high_wage):
+    # Show different percentages of the low wage and high wage, respectively
+    if more_high_wage == True:
+        p_lowwage = '25%'
+        p_highwage = '75%'
+    elif more_high_wage == False:
+        p_lowwage = '75%'
+        p_highwage = '25%'
+    return dict(
+            p_lowwage=p_lowwage, p_highwage=p_highwage,
+        )    
+
 # PAGES
 class Instruction(Page):
     @staticmethod
     def vars_for_template(player):
-        if player.more_high_wage == True:
-            p_lowwage = '25%'
-            p_highwage = '75%'
-        elif player.more_high_wage == False:
-            p_lowwage = '75%'
-            p_highwage = '25%'
+        # Show different percentages of the low wage and high wage, respectively
+        # if player.more_high_wage == True:
+        #     p_lowwage = '25%'
+        #     p_highwage = '75%'
+        # elif player.more_high_wage == False:
+        #     p_lowwage = '75%'
+        #     p_highwage = '25%'
 
         treatment = 1 if player.treatment == 1 else 2
         
         return dict(
-            p_lowwage=p_lowwage, p_highwage=p_highwage, treatment=treatment,
+            p_lowwage=vars_for_wage_distribution(player.more_high_wage)['p_lowwage'], p_highwage=vars_for_wage_distribution(player.more_high_wage)['p_highwage'], treatment=treatment,
         )    
 
 class Instruction_comprehension_questions(Page):
     @staticmethod
     def vars_for_template(player):
-        if player.more_high_wage == True:
-            p_lowwage = '25%'
-            p_highwage = '75%'
-        elif player.more_high_wage == False:
-            p_lowwage = '75%'
-            p_highwage = '25%'
+        # Show different percentages of the low wage and high wage, respectively
+        # if player.more_high_wage == True:
+        #     p_lowwage = '25%'
+        #     p_highwage = '75%'
+        # elif player.more_high_wage == False:
+        #     p_lowwage = '75%'
+        #     p_highwage = '25%'
 
         treatment = 1 if player.treatment == 1 else 2
         
         return dict(
-            p_lowwage=p_lowwage, p_highwage=p_highwage, treatment=treatment,
+            p_lowwage=vars_for_wage_distribution(player.more_high_wage)['p_lowwage'], p_highwage=vars_for_wage_distribution(player.more_high_wage)['p_highwage'], treatment=treatment,
         )    
 
 class Instruction_wage_rate_assignment(Page):
     @staticmethod
     def vars_for_template(player):
-        if player.more_high_wage == True:
-            p_lowwage = '25%'
-            p_highwage = '75%'
-        elif player.more_high_wage == False:
-            p_lowwage = '75%'
-            p_highwage = '25%'
+        # if player.more_high_wage == True:
+        #     p_lowwage = '25%'
+        #     p_highwage = '75%'
+        # elif player.more_high_wage == False:
+        #     p_lowwage = '75%'
+        #     p_highwage = '25%'
 
         treatment = 1 if player.treatment == 1 else 2
         
         return dict(
-            p_lowwage=p_lowwage, p_highwage=p_highwage, treatment=treatment,
+            p_lowwage=vars_for_wage_distribution(player.more_high_wage)['p_lowwage'], p_highwage=vars_for_wage_distribution(player.more_high_wage)['p_highwage'], treatment=treatment,
         )    
 class Instruction_counting_zeros(Page):
     @staticmethod
     def vars_for_template(player):
-        if player.more_high_wage == True:
-            p_lowwage = '25%'
-            p_highwage = '75%'
-        elif player.more_high_wage == False:
-            p_lowwage = '75%'
-            p_highwage = '25%'
+        # if player.more_high_wage == True:
+        #     p_lowwage = '25%'
+        #     p_highwage = '75%'
+        # elif player.more_high_wage == False:
+        #     p_lowwage = '75%'
+        #     p_highwage = '25%'
 
         treatment = 1 if player.treatment == 1 else 2
         
         return dict(
-            p_lowwage=p_lowwage, p_highwage=p_highwage, treatment=treatment,
+            p_lowwage=vars_for_wage_distribution(player.more_high_wage)['p_lowwage'], p_highwage=vars_for_wage_distribution(player.more_high_wage)['p_highwage'], treatment=treatment,
         )    
 
 class Instruction_paired_with_a_partner(Page):
     @staticmethod
     def vars_for_template(player):
-        if player.more_high_wage == True:
-            p_lowwage = '25%'
-            p_highwage = '75%'
-        elif player.more_high_wage == False:
-            p_lowwage = '75%'
-            p_highwage = '25%'
+        # if player.more_high_wage == True:
+        #     p_lowwage = '25%'
+        #     p_highwage = '75%'
+        # elif player.more_high_wage == False:
+        #     p_lowwage = '75%'
+        #     p_highwage = '25%'
 
         treatment = 1 if player.treatment == 1 else 2
         
         return dict(
-            p_lowwage=p_lowwage, p_highwage=p_highwage, treatment=treatment,
+            p_lowwage=vars_for_wage_distribution(player.more_high_wage)['p_lowwage'], p_highwage=vars_for_wage_distribution(player.more_high_wage)['p_highwage'], treatment=treatment,
         )   
 
 class Instruction_income_transfer(Page):
     @staticmethod
     def vars_for_template(player):
-        if player.more_high_wage == True:
-            p_lowwage = '25%'
-            p_highwage = '75%'
-        elif player.more_high_wage == False:
-            p_lowwage = '75%'
-            p_highwage = '25%'
+        # if player.more_high_wage == True:
+        #     p_lowwage = '25%'
+        #     p_highwage = '75%'
+        # elif player.more_high_wage == False:
+        #     p_lowwage = '75%'
+        #     p_highwage = '25%'
 
         treatment = 1 if player.treatment == 1 else 2
         
         return dict(
-            p_lowwage=p_lowwage, p_highwage=p_highwage, treatment=treatment,
+            p_lowwage=vars_for_wage_distribution(player.more_high_wage)['p_lowwage'], p_highwage=vars_for_wage_distribution(player.more_high_wage)['p_highwage'], treatment=treatment,
         )    
 
 class Instruction_second_survey(Page):
     @staticmethod
     def vars_for_template(player):
-        if player.more_high_wage == True:
-            p_lowwage = '25%'
-            p_highwage = '75%'
-        elif player.more_high_wage == False:
-            p_lowwage = '75%'
-            p_highwage = '25%'
+        # if player.more_high_wage == True:
+        #     p_lowwage = '25%'
+        #     p_highwage = '75%'
+        # elif player.more_high_wage == False:
+        #     p_lowwage = '75%'
+        #     p_highwage = '25%'
 
         treatment = 1 if player.treatment == 1 else 2
         
         return dict(
-            p_lowwage=p_lowwage, p_highwage=p_highwage, treatment=treatment,
+            p_lowwage=vars_for_wage_distribution(player.more_high_wage)['p_lowwage'], p_highwage=vars_for_wage_distribution(player.more_high_wage)['p_highwage'], treatment=treatment,
         )    
 
 class Instruction_payments(Page):
     @staticmethod
     def vars_for_template(player):
-        if player.more_high_wage == True:
-            p_lowwage = '25%'
-            p_highwage = '75%'
-        elif player.more_high_wage == False:
-            p_lowwage = '75%'
-            p_highwage = '25%'
+        # if player.more_high_wage == True:
+        #     p_lowwage = '25%'
+        #     p_highwage = '75%'
+        # elif player.more_high_wage == False:
+        #     p_lowwage = '75%'
+        #     p_highwage = '25%'
 
         treatment = 1 if player.treatment == 1 else 2
         
         return dict(
-            p_lowwage=p_lowwage, p_highwage=p_highwage, treatment=treatment,
+            p_lowwage=vars_for_wage_distribution(player.more_high_wage)['p_lowwage'], p_highwage=vars_for_wage_distribution(player.more_high_wage)['p_highwage'], treatment=treatment,
         )            
 
 
@@ -279,17 +290,17 @@ class ComprehensiveQuestions(Page):
         return error_messages
     @staticmethod
     def vars_for_template(player):
-        if player.more_high_wage == True:
-            p_lowwage = '25%'
-            p_highwage = '75%'
-        elif player.more_high_wage == False:
-            p_lowwage = '75%'
-            p_highwage = '25%'
+        # if player.more_high_wage == True:
+        #     p_lowwage = '25%'
+        #     p_highwage = '75%'
+        # elif player.more_high_wage == False:
+        #     p_lowwage = '75%'
+        #     p_highwage = '25%'
 
         treatment = 1 if player.treatment == 1 else 2
         
         return dict(
-            p_lowwage=p_lowwage, p_highwage=p_highwage, treatment=treatment,
+            p_lowwage=vars_for_wage_distribution(player.more_high_wage)['p_lowwage'], p_highwage=vars_for_wage_distribution(player.more_high_wage)['p_highwage'], treatment=treatment,
         )           
 
 class Failed(Page):

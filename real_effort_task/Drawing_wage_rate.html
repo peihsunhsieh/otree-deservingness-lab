@@ -1,6 +1,6 @@
 
 {{ block content }} 
-    <p>Now you are going to be assigned the wage per table by the computer. It can be either $0.1 per table or $0.2 per table. 
+    <p>Now you are going to be assigned the wage per table by the computer. It can be either ${{ session.low_wage_rate }} per table or ${{ session.high_wage_rate }} per table. 
         Please click the button below and you will be assigned a wage rate. <strong>Everyone has a {{p_lowwage}} probability of being 
             assigned 10 cents per table as the wage rate and {{p_highwage}} probability of being assigned 20 cents per table as the 
             wage rate.</strong></div></p>
@@ -9,7 +9,7 @@
     <div id="wage_rate"  style="display:none;"><p style="color:red"><strong> Your wage rate is ${{player.wage}} per table!</strong></p></div>
 
     <button class="btn btn-primary" style="display: none" id="next-button">Next</button>
-{{ endblock }}
+
 
 <script>
 function showDiv() {
@@ -18,3 +18,5 @@ function showDiv() {
 }
 
 </script>
+
+{{ endblock }}

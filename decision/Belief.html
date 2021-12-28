@@ -2,7 +2,7 @@
     Make your guess for more bonus
 {{ endblock }}
 {{ block content }}
-<p> Guess the pecentage of the participants whose wage rate per table is $0.2 for each possible bonus from the counting task. 
+<p> Guess the percentage of the participants whose wage rate per table is $0.2 for each possible bonus from the counting task. 
 <strong>After the session of the study is completed, we will randomly choose one of the following questions, and if your answer is 
     within plus or minus 5, you will get extra $0.5. </strong>
 
@@ -12,6 +12,8 @@
 
 <p><strong>Everyone has a {{p_lowwage}} probability of being assigned $0.1 per table as the wage rate and {{p_highwage}} probability of being 
         assigned $0.2 per table as the wage rate.</strong> </p>
+
+<p>Please answer the questions by the sliders below. <font style="color:red">You must move all the sliders to proceed.</font></p>
 
 {{ form.believe_income_00.label }}
 <div>
@@ -110,6 +112,8 @@
 
 
 <button class="btn btn-primary" style="display: none" id="next-button">Next</button>
+
+<p>Please make sure you have moved all the sliders to proceed.</p>
 
 <script>
 let clicked_or_not = [false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false];

@@ -1,7 +1,7 @@
 from otree.api import *
 import random
 import math
-import string
+
 
 doc = """
 Your app description
@@ -16,55 +16,62 @@ class Constants(BaseConstants):
     recipient_role = 'role B'
     low_wage = 0.1
     high_wage = 0.2
-    yo_dic = {0:{'wage':low_wage,'income':0},
-    1:{'wage':low_wage,'income':0.1},
-    2:{'wage':low_wage,'income':0.2},
-    3:{'wage':low_wage,'income':0.3},
-    4:{'wage':low_wage,'income':0.4},
-    5:{'wage':low_wage,'income':0.5},
-    6:{'wage':low_wage,'income':0.6},
-    7:{'wage':low_wage,'income':0.7},
-    8:{'wage':low_wage,'income':0.8},
-    9:{'wage':low_wage,'income':0.9},
-    10:{'wage':low_wage,'income':1},
-    11:{'wage':high_wage,'income':0},
-    12:{'wage':high_wage,'income':0.2},
-    13:{'wage':high_wage,'income':0.4},
-    14:{'wage':high_wage,'income':0.6},
-    15:{'wage':high_wage,'income':0.8},
-    16:{'wage':high_wage,'income':1},
-    17:{'wage':high_wage,'income':1.2},
-    18:{'wage':high_wage,'income':1.4},
-    19:{'wage':high_wage,'income':1.6},
-    20:{'wage':high_wage,'income':1.8},
-    21:{'wage':high_wage,'income':2}}
+    choice_interval = 0.1
 
-    no_dic = {0:{'income':0},
-    1:{'income':0.1},
-    2:{'income':0.2},
-    3:{'income':0.3},
-    4:{'income':0.4},
-    5:{'income':0.5},
-    6:{'income':0.6},
-    7:{'income':0.7},
-    8:{'income':0.8},
-    9:{'income':0.9},
-    10:{'income':1},
-    11:{'income':1.2},
-    12:{'income':1.4},
-    13:{'income':1.6},
-    14:{'income':1.8},
-    15:{'income':2}}    
+    # The two following dictionaries are the dictionaries for all the wgae-income combinations and incomes.
+    yo_dic = {0:{'wage':low_wage,'income':round(low_wage*0,1)},
+    1:{'wage':low_wage,'income':round(low_wage*1,1)},
+    2:{'wage':low_wage,'income':round(low_wage*2,1)},
+    3:{'wage':low_wage,'income':round(low_wage*3,1)},
+    4:{'wage':low_wage,'income':round(low_wage*4,1)},
+    5:{'wage':low_wage,'income':round(low_wage*5,1)},
+    6:{'wage':low_wage,'income':round(low_wage*6,1)},
+    7:{'wage':low_wage,'income':round(low_wage*7,1)},
+    8:{'wage':low_wage,'income':round(low_wage*8,1)},
+    9:{'wage':low_wage,'income':round(low_wage*9,1)},
+    10:{'wage':low_wage,'income':round(low_wage*10,1)},
+    11:{'wage':high_wage,'income':round(high_wage*0,1)},
+    12:{'wage':high_wage,'income':round(high_wage*1,1)},
+    13:{'wage':high_wage,'income':round(high_wage*2,1)},
+    14:{'wage':high_wage,'income':round(high_wage*3,1)},
+    15:{'wage':high_wage,'income':round(high_wage*4,1)},
+    16:{'wage':high_wage,'income':round(high_wage*5,1)},
+    17:{'wage':high_wage,'income':round(high_wage*6,1)},
+    18:{'wage':high_wage,'income':round(high_wage*7,1)},
+    19:{'wage':high_wage,'income':round(high_wage*8,1)},
+    20:{'wage':high_wage,'income':round(high_wage*9,1)},
+    21:{'wage':high_wage,'income':round(high_wage*10,1)}}
+
+    all_possible_earnings = list(set([round(0.1*i,1) for i in range(0,11)]+[round(0.2*i,1) for i in range(0,11)]))
+    all_possible_earnings.sort()
+
+    no_dic = {0:{'income':all_possible_earnings[0]},
+    1:{'income':all_possible_earnings[1]},
+    2:{'income':all_possible_earnings[2]},
+    3:{'income':all_possible_earnings[3]},
+    4:{'income':all_possible_earnings[4]},
+    5:{'income':all_possible_earnings[5]},
+    6:{'income':all_possible_earnings[6]},
+    7:{'income':all_possible_earnings[7]},
+    8:{'income':all_possible_earnings[8]},
+    9:{'income':all_possible_earnings[9]},
+    10:{'income':all_possible_earnings[10]},
+    11:{'income':all_possible_earnings[11]},
+    12:{'income':all_possible_earnings[12]},
+    13:{'income':all_possible_earnings[13]},
+    14:{'income':all_possible_earnings[14]},
+    15:{'income':all_possible_earnings[15]}}    
 
 
 class Subsession(BaseSubsession):
     pass
 
-def make_transfer_field(wage,income,treatment,role):
+
+def make_transfer_field(wage,income,treatment,role): # The function for implementing the role A's decision.
     if treatment==1 and role==1:
-        label=f'If the participant paired with you has earned ${income} with a wage of ${wage} per table from the counting task, how much do do you want to give to the participant?'
+        label=f'If the participant paired with you has earned ${income} with a wage of ${wage} per table from the counting task, how much do you want to give to the participant?'
     elif treatment==2 and role==1:
-        label=f'If the participant paired with you has earned ${income}, how much do do you want to give to the participant?'
+        label=f'If the participant paired with you has earned ${income}, how much do you want to give to the participant?'
     elif treatment==1 and role==2:
         label=f'If the participant paired with you has earned ${income} with a wage of ${wage} per table from the counting task, how much do you think the participant will give you?'
     elif treatment==2 and role==2:
@@ -77,7 +84,7 @@ def make_transfer_field(wage,income,treatment,role):
         )
     elif role==2:
         return models.CurrencyField(
-            choices = currency_range(0,cu(income),0.1),
+            choices = currency_range(0,cu(income),Constants.choice_interval),
             label=label,
             widget=widgets.RadioSelect
         )              
@@ -87,88 +94,89 @@ class Group(BaseGroup):
     treatment = models.IntegerField()
     more_high_wage = models.BooleanField()
     n_players = models.IntegerField()
+    # All role A's decisions in the observable condition.
+    yo_l_00 = make_transfer_field(Constants.low_wage,Constants.yo_dic[0]['income'],1,1)
+    yo_l_01 = make_transfer_field(Constants.low_wage,Constants.yo_dic[1]['income'],1,1)
+    yo_l_02 = make_transfer_field(Constants.low_wage,Constants.yo_dic[2]['income'],1,1)
+    yo_l_03 = make_transfer_field(Constants.low_wage,Constants.yo_dic[3]['income'],1,1)
+    yo_l_04 = make_transfer_field(Constants.low_wage,Constants.yo_dic[4]['income'],1,1)
+    yo_l_05 = make_transfer_field(Constants.low_wage,Constants.yo_dic[5]['income'],1,1)
+    yo_l_06 = make_transfer_field(Constants.low_wage,Constants.yo_dic[6]['income'],1,1)
+    yo_l_07 = make_transfer_field(Constants.low_wage,Constants.yo_dic[7]['income'],1,1)
+    yo_l_08 = make_transfer_field(Constants.low_wage,Constants.yo_dic[8]['income'],1,1)
+    yo_l_09 = make_transfer_field(Constants.low_wage,Constants.yo_dic[9]['income'],1,1)
+    yo_l_10 = make_transfer_field(Constants.low_wage,Constants.yo_dic[10]['income'],1,1)
+    yo_h_00 = make_transfer_field(Constants.high_wage,Constants.yo_dic[11]['income'],1,1)
+    yo_h_01 = make_transfer_field(Constants.high_wage,Constants.yo_dic[12]['income'],1,1)
+    yo_h_02 = make_transfer_field(Constants.high_wage,Constants.yo_dic[13]['income'],1,1)
+    yo_h_03 = make_transfer_field(Constants.high_wage,Constants.yo_dic[14]['income'],1,1)
+    yo_h_04 = make_transfer_field(Constants.high_wage,Constants.yo_dic[15]['income'],1,1)
+    yo_h_05 = make_transfer_field(Constants.high_wage,Constants.yo_dic[16]['income'],1,1)
+    yo_h_06 = make_transfer_field(Constants.high_wage,Constants.yo_dic[17]['income'],1,1)
+    yo_h_07 = make_transfer_field(Constants.high_wage,Constants.yo_dic[18]['income'],1,1)
+    yo_h_08 = make_transfer_field(Constants.high_wage,Constants.yo_dic[19]['income'],1,1)
+    yo_h_09 = make_transfer_field(Constants.high_wage,Constants.yo_dic[20]['income'],1,1)
+    yo_h_10 = make_transfer_field(Constants.high_wage,Constants.yo_dic[21]['income'],1,1)
 
-    yo_l_00 = make_transfer_field(Constants.low_wage,0,1,1)
-    yo_l_01 = make_transfer_field(Constants.low_wage,0.1,1,1)
-    yo_l_02 = make_transfer_field(Constants.low_wage,0.2,1,1)
-    yo_l_03 = make_transfer_field(Constants.low_wage,0.3,1,1)
-    yo_l_04 = make_transfer_field(Constants.low_wage,0.4,1,1)
-    yo_l_05 = make_transfer_field(Constants.low_wage,0.5,1,1)
-    yo_l_06 = make_transfer_field(Constants.low_wage,0.6,1,1)
-    yo_l_07 = make_transfer_field(Constants.low_wage,0.7,1,1)
-    yo_l_08 = make_transfer_field(Constants.low_wage,0.8,1,1)
-    yo_l_09 = make_transfer_field(Constants.low_wage,0.9,1,1)
-    yo_l_10 = make_transfer_field(Constants.low_wage,1,1,1)
-    yo_h_00 = make_transfer_field(Constants.high_wage,0,1,1)
-    yo_h_01 = make_transfer_field(Constants.high_wage,0.2,1,1)
-    yo_h_02 = make_transfer_field(Constants.high_wage,0.4,1,1)
-    yo_h_03 = make_transfer_field(Constants.high_wage,0.6,1,1)
-    yo_h_04 = make_transfer_field(Constants.high_wage,0.8,1,1)
-    yo_h_05 = make_transfer_field(Constants.high_wage,1,1,1)
-    yo_h_06 = make_transfer_field(Constants.high_wage,1.2,1,1)
-    yo_h_07 = make_transfer_field(Constants.high_wage,1.4,1,1)
-    yo_h_08 = make_transfer_field(Constants.high_wage,1.6,1,1)
-    yo_h_09 = make_transfer_field(Constants.high_wage,1.8,1,1)
-    yo_h_10 = make_transfer_field(Constants.high_wage,2,1,1)
+    # All role B's decisions in the observable condition.
+    g_yo_l_00 = make_transfer_field(Constants.low_wage,Constants.yo_dic[0]['income'],1,2)
+    g_yo_l_01 = make_transfer_field(Constants.low_wage,Constants.yo_dic[1]['income'],1,2)
+    g_yo_l_02 = make_transfer_field(Constants.low_wage,Constants.yo_dic[2]['income'],1,2)
+    g_yo_l_03 = make_transfer_field(Constants.low_wage,Constants.yo_dic[3]['income'],1,2)
+    g_yo_l_04 = make_transfer_field(Constants.low_wage,Constants.yo_dic[4]['income'],1,2)
+    g_yo_l_05 = make_transfer_field(Constants.low_wage,Constants.yo_dic[5]['income'],1,2)
+    g_yo_l_06 = make_transfer_field(Constants.low_wage,Constants.yo_dic[6]['income'],1,2)
+    g_yo_l_07 = make_transfer_field(Constants.low_wage,Constants.yo_dic[7]['income'],1,2)
+    g_yo_l_08 = make_transfer_field(Constants.low_wage,Constants.yo_dic[8]['income'],1,2)
+    g_yo_l_09 = make_transfer_field(Constants.low_wage,Constants.yo_dic[9]['income'],1,2)
+    g_yo_l_10 = make_transfer_field(Constants.low_wage,Constants.yo_dic[10]['income'],1,2)
+    g_yo_h_00 = make_transfer_field(Constants.high_wage,Constants.yo_dic[11]['income'],1,2)
+    g_yo_h_01 = make_transfer_field(Constants.high_wage,Constants.yo_dic[12]['income'],1,2)
+    g_yo_h_02 = make_transfer_field(Constants.high_wage,Constants.yo_dic[13]['income'],1,2)
+    g_yo_h_03 = make_transfer_field(Constants.high_wage,Constants.yo_dic[14]['income'],1,2)
+    g_yo_h_04 = make_transfer_field(Constants.high_wage,Constants.yo_dic[15]['income'],1,2)
+    g_yo_h_05 = make_transfer_field(Constants.high_wage,Constants.yo_dic[16]['income'],1,2)
+    g_yo_h_06 = make_transfer_field(Constants.high_wage,Constants.yo_dic[17]['income'],1,2)
+    g_yo_h_07 = make_transfer_field(Constants.high_wage,Constants.yo_dic[18]['income'],1,2)
+    g_yo_h_08 = make_transfer_field(Constants.high_wage,Constants.yo_dic[19]['income'],1,2)
+    g_yo_h_09 = make_transfer_field(Constants.high_wage,Constants.yo_dic[20]['income'],1,2)
+    g_yo_h_10 = make_transfer_field(Constants.high_wage,Constants.yo_dic[21]['income'],1,2)  
 
+    # All role A's decisions in the unobservable condition.
+    no_00 = make_transfer_field(0.1,Constants.no_dic[0]['income'],2,1)
+    no_01 = make_transfer_field(0.1,Constants.no_dic[1]['income'],2,1)
+    no_02 = make_transfer_field(0.1,Constants.no_dic[2]['income'],2,1)
+    no_03 = make_transfer_field(0.1,Constants.no_dic[3]['income'],2,1)
+    no_04 = make_transfer_field(0.1,Constants.no_dic[4]['income'],2,1)
+    no_05 = make_transfer_field(0.1,Constants.no_dic[5]['income'],2,1)
+    no_06 = make_transfer_field(0.1,Constants.no_dic[6]['income'],2,1)
+    no_07 = make_transfer_field(0.1,Constants.no_dic[7]['income'],2,1)
+    no_08 = make_transfer_field(0.1,Constants.no_dic[8]['income'],2,1)
+    no_09 = make_transfer_field(0.1,Constants.no_dic[9]['income'],2,1)
+    no_10 = make_transfer_field(0.1,Constants.no_dic[10]['income'],2,1)
+    no_12 = make_transfer_field(0.1,Constants.no_dic[11]['income'],2,1)
+    no_14 = make_transfer_field(0.1,Constants.no_dic[12]['income'],2,1)
+    no_16 = make_transfer_field(0.1,Constants.no_dic[13]['income'],2,1)
+    no_18 = make_transfer_field(0.1,Constants.no_dic[14]['income'],2,1)
+    no_20 = make_transfer_field(0.1,Constants.no_dic[15]['income'],2,1)
 
-
-    g_yo_l_00 = make_transfer_field(Constants.low_wage,0,1,2)
-    g_yo_l_01 = make_transfer_field(Constants.low_wage,0.1,1,2)
-    g_yo_l_02 = make_transfer_field(Constants.low_wage,0.2,1,2)
-    g_yo_l_03 = make_transfer_field(Constants.low_wage,0.3,1,2)
-    g_yo_l_04 = make_transfer_field(Constants.low_wage,0.4,1,2)
-    g_yo_l_05 = make_transfer_field(Constants.low_wage,0.5,1,2)
-    g_yo_l_06 = make_transfer_field(Constants.low_wage,0.6,1,2)
-    g_yo_l_07 = make_transfer_field(Constants.low_wage,0.7,1,2)
-    g_yo_l_08 = make_transfer_field(Constants.low_wage,0.8,1,2)
-    g_yo_l_09 = make_transfer_field(Constants.low_wage,0.9,1,2)
-    g_yo_l_10 = make_transfer_field(Constants.low_wage,1,1,2)
-    g_yo_h_00 = make_transfer_field(Constants.high_wage,0,1,2)
-    g_yo_h_01 = make_transfer_field(Constants.high_wage,0.2,1,2)
-    g_yo_h_02 = make_transfer_field(Constants.high_wage,0.4,1,2)
-    g_yo_h_03 = make_transfer_field(Constants.high_wage,0.6,1,2)
-    g_yo_h_04 = make_transfer_field(Constants.high_wage,0.8,1,2)
-    g_yo_h_05 = make_transfer_field(Constants.high_wage,1,1,2)
-    g_yo_h_06 = make_transfer_field(Constants.high_wage,1.2,1,2)
-    g_yo_h_07 = make_transfer_field(Constants.high_wage,1.4,1,2)
-    g_yo_h_08 = make_transfer_field(Constants.high_wage,1.6,1,2)
-    g_yo_h_09 = make_transfer_field(Constants.high_wage,1.8,1,2)
-    g_yo_h_10 = make_transfer_field(Constants.high_wage,2,1,2)    
-
-    no_00 = make_transfer_field(0.1,0,2,1)
-    no_01 = make_transfer_field(0.1,0.1,2,1)
-    no_02 = make_transfer_field(0.1,0.2,2,1)
-    no_03 = make_transfer_field(0.1,0.3,2,1)
-    no_04 = make_transfer_field(0.1,0.4,2,1)
-    no_05 = make_transfer_field(0.1,0.5,2,1)
-    no_06 = make_transfer_field(0.1,0.6,2,1)
-    no_07 = make_transfer_field(0.1,0.7,2,1)
-    no_08 = make_transfer_field(0.1,0.8,2,1)
-    no_09 = make_transfer_field(0.1,0.9,2,1)
-    no_10 = make_transfer_field(0.1,1,2,1)
-    no_12 = make_transfer_field(0.1,1.2,2,1)
-    no_14 = make_transfer_field(0.1,1.4,2,1)
-    no_16 = make_transfer_field(0.1,1.6,2,1)
-    no_18 = make_transfer_field(0.1,1.8,2,1)
-    no_20 = make_transfer_field(0.1,2,2,1)
-
-    g_no_00 = make_transfer_field(0.1,0,2,2)
-    g_no_01 = make_transfer_field(0.1,0.1,2,2)
-    g_no_02 = make_transfer_field(0.1,0.2,2,2)
-    g_no_03 = make_transfer_field(0.1,0.3,2,2)
-    g_no_04 = make_transfer_field(0.1,0.4,2,2)
-    g_no_05 = make_transfer_field(0.1,0.5,2,2)
-    g_no_06 = make_transfer_field(0.1,0.6,2,2)
-    g_no_07 = make_transfer_field(0.1,0.7,2,2)
-    g_no_08 = make_transfer_field(0.1,0.8,2,2)
-    g_no_09 = make_transfer_field(0.1,0.9,2,2)
-    g_no_10 = make_transfer_field(0.1,1,2,2)
-    g_no_12 = make_transfer_field(0.1,1.2,2,2)
-    g_no_14 = make_transfer_field(0.1,1.4,2,2)
-    g_no_16 = make_transfer_field(0.1,1.6,2,2)
-    g_no_18 = make_transfer_field(0.1,1.8,2,2)
-    g_no_20 = make_transfer_field(0.1,2,2,2)    
+    # All role B's decisions in the unobservable condition.
+    g_no_00 = make_transfer_field(0.1,Constants.no_dic[0]['income'],2,2)
+    g_no_01 = make_transfer_field(0.1,Constants.no_dic[1]['income'],2,2)
+    g_no_02 = make_transfer_field(0.1,Constants.no_dic[2]['income'],2,2)
+    g_no_03 = make_transfer_field(0.1,Constants.no_dic[3]['income'],2,2)
+    g_no_04 = make_transfer_field(0.1,Constants.no_dic[4]['income'],2,2)
+    g_no_05 = make_transfer_field(0.1,Constants.no_dic[5]['income'],2,2)
+    g_no_06 = make_transfer_field(0.1,Constants.no_dic[6]['income'],2,2)
+    g_no_07 = make_transfer_field(0.1,Constants.no_dic[7]['income'],2,2)
+    g_no_08 = make_transfer_field(0.1,Constants.no_dic[8]['income'],2,2)
+    g_no_09 = make_transfer_field(0.1,Constants.no_dic[9]['income'],2,2)
+    g_no_10 = make_transfer_field(0.1,Constants.no_dic[10]['income'],2,2)
+    g_no_12 = make_transfer_field(0.1,Constants.no_dic[11]['income'],2,2)
+    g_no_14 = make_transfer_field(0.1,Constants.no_dic[12]['income'],2,2)
+    g_no_16 = make_transfer_field(0.1,Constants.no_dic[13]['income'],2,2)
+    g_no_18 = make_transfer_field(0.1,Constants.no_dic[14]['income'],2,2)
+    g_no_20 = make_transfer_field(0.1,Constants.no_dic[15]['income'],2,2)    
 
     dictator_earning = models.CurrencyField()
     dictator_wage = models.CurrencyField()
@@ -176,7 +184,8 @@ class Group(BaseGroup):
     recipient_wage = models.CurrencyField()    
     final_transfer = models.CurrencyField()
 
-
+#############################################
+# This functions serves the multiple choices for role A based on their earning
 def transfer_choices_function(group):
     choices = currency_range(0,group.dictator_earning,0.1)
     return choices
@@ -221,8 +230,8 @@ no_16_choices = transfer_choices_function
 no_18_choices = transfer_choices_function 
 no_20_choices = transfer_choices_function 
 
-
-def make_belief_field(income):
+############################################################
+def make_belief_field(income): # This function set the arguments of belief variables
     return models.IntegerField(
         min=0,
         max=100,
@@ -233,22 +242,22 @@ class Player(BasePlayer):
     is_dropout = models.BooleanField(initial=False)
     dropout_page = models.StringField(initial='')
 
-    believe_income_00 = make_belief_field(0)
-    believe_income_01 = make_belief_field(0.1)
-    believe_income_02 = make_belief_field(0.2)
-    believe_income_03 = make_belief_field(0.3)
-    believe_income_04 = make_belief_field(0.4)
-    believe_income_05 = make_belief_field(0.5)
-    believe_income_06 = make_belief_field(0.6)
-    believe_income_07 = make_belief_field(0.7)
-    believe_income_08 = make_belief_field(0.8)
-    believe_income_09 = make_belief_field(0.9)
-    believe_income_10 = make_belief_field(1)
-    believe_income_12 = make_belief_field(1.2)
-    believe_income_14 = make_belief_field(1.4)
-    believe_income_16 = make_belief_field(1.6)
-    believe_income_18 = make_belief_field(1.8)
-    believe_income_20 = make_belief_field(2)
+    believe_income_00 = make_belief_field(Constants.no_dic[0]['income'])
+    believe_income_01 = make_belief_field(Constants.no_dic[1]['income'])
+    believe_income_02 = make_belief_field(Constants.no_dic[2]['income'])
+    believe_income_03 = make_belief_field(Constants.no_dic[3]['income'])
+    believe_income_04 = make_belief_field(Constants.no_dic[4]['income'])
+    believe_income_05 = make_belief_field(Constants.no_dic[5]['income'])
+    believe_income_06 = make_belief_field(Constants.no_dic[6]['income'])
+    believe_income_07 = make_belief_field(Constants.no_dic[7]['income'])
+    believe_income_08 = make_belief_field(Constants.no_dic[8]['income'])
+    believe_income_09 = make_belief_field(Constants.no_dic[9]['income'])
+    believe_income_10 = make_belief_field(Constants.no_dic[10]['income'])
+    believe_income_12 = make_belief_field(Constants.no_dic[11]['income'])
+    believe_income_14 = make_belief_field(Constants.no_dic[12]['income'])
+    believe_income_16 = make_belief_field(Constants.no_dic[13]['income'])
+    believe_income_18 = make_belief_field(Constants.no_dic[14]['income'])
+    believe_income_20 = make_belief_field(Constants.no_dic[15]['income'])
 
     post_q1 = models.IntegerField(
         widget=widgets.RadioSelect,
@@ -263,11 +272,6 @@ class Player(BasePlayer):
     feedback = models.LongStringField(label='Please let us know how do you make your decisions.',blank=True)
     confirmation_code = models.StringField()
 
-def get_random_string(length):
-    # With combination of lower and upper case
-    result_str = ''.join(random.choice(string.ascii_letters) for i in range(length))
-    # print random string
-    return result_str
 
 
 def waiting_too_long(player):
@@ -278,7 +282,7 @@ def waiting_too_long(player):
 
 
 def group_by_arrival_time_method(subsession, waiting_players):
-    # print('in group_by_arrival_time_method')
+    # match the players in the same information condition and wage distribution
     observable_high_players = [p for p in waiting_players if p.participant.more_high_wage == True and p.participant.treatment == 1]
     observable_low_players = [p for p in waiting_players if p.participant.more_high_wage == False and p.participant.treatment == 1]
     unobservable_high_players = [p for p in waiting_players if p.participant.more_high_wage == True and p.participant.treatment == 2]
@@ -372,7 +376,7 @@ class Decision_instruction(Page):
                 player.dropout_page = 'Decision_instruction'
                 player.is_dropout = True               
 
-class Decision_roleA_yo(Page):
+class Decision_roleA_yo(Page): # role A in the observable condition
     form_model = 'group'
     form_fields = ['yo_l_00', 'yo_l_01', 'yo_l_02', 'yo_l_03', 'yo_l_04', 'yo_l_05', 'yo_l_06', 'yo_l_07', 'yo_l_08', 'yo_l_09', 'yo_l_10',\
         'yo_h_00', 'yo_h_01', 'yo_h_02', 'yo_h_03', 'yo_h_04', 'yo_h_05', 'yo_h_06', 'yo_h_07', 'yo_h_08', 'yo_h_09', 'yo_h_10']
@@ -435,7 +439,7 @@ class Decision_roleA_yo(Page):
         if player.is_dropout == True: 
             return 'end'                      
 
-class Decision_roleB_yo(Page):
+class Decision_roleB_yo(Page): # role B in the observable condition
     form_model = 'group'
     form_fields = ['g_yo_l_00', 'g_yo_l_01', 'g_yo_l_02', 'g_yo_l_03', 'g_yo_l_04', 'g_yo_l_05', 'g_yo_l_06', 'g_yo_l_07', 'g_yo_l_08', 'g_yo_l_09', 'g_yo_l_10',\
         'g_yo_h_00', 'g_yo_h_01', 'g_yo_h_02', 'g_yo_h_03', 'g_yo_h_04', 'g_yo_h_05', 'g_yo_h_06', 'g_yo_h_07', 'g_yo_h_08', 'g_yo_h_09', 'g_yo_h_10']
@@ -474,7 +478,7 @@ class Decision_roleB_yo(Page):
         if player.is_dropout == True: 
             return 'end'                              
 
-class Decision_roleA_no(Page):
+class Decision_roleA_no(Page): # role A in the unobservable condition
     form_model = 'group'
     form_fields = ['no_00','no_01','no_02','no_03','no_04','no_05','no_06','no_07','no_08','no_09','no_10','no_12','no_14','no_16','no_18','no_20']
     @staticmethod
@@ -532,7 +536,7 @@ class Decision_roleA_no(Page):
         if player.is_dropout == True: 
             return 'end'                             
 
-class Decision_roleB_no(Page):
+class Decision_roleB_no(Page): # role B in the unobservable condition
     form_model = 'group'
     form_fields = ['g_no_00','g_no_01','g_no_02','g_no_03','g_no_04','g_no_05','g_no_06','g_no_07','g_no_08','g_no_09','g_no_10','g_no_12','g_no_14','g_no_16','g_no_18','g_no_20']
     @staticmethod
@@ -571,10 +575,15 @@ class Decision_roleB_no(Page):
             return 'end'                       
 
 
-class Decision_single_yo(Page):
+class Decision_single_yo(Page): # single role group in the observable condition 
     form_model = 'group'
     form_fields = ['yo_l_00', 'yo_l_01', 'yo_l_02', 'yo_l_03', 'yo_l_04', 'yo_l_05', 'yo_l_06', 'yo_l_07', 'yo_l_08', 'yo_l_09', 'yo_l_10',\
         'yo_h_00', 'yo_h_01', 'yo_h_02', 'yo_h_03', 'yo_h_04', 'yo_h_05', 'yo_h_06', 'yo_h_07', 'yo_h_08', 'yo_h_09', 'yo_h_10']
+    @staticmethod
+    def get_form_fields(player: Player):
+        form_fields = ['aaa', 'bbb', 'ccc', 'ddd']
+        random.shuffle(form_fields)
+        return form_fields            
     @staticmethod
     def is_displayed(player: Player):
         return player.group.n_players<2 and player.group.treatment == 1
@@ -611,9 +620,10 @@ class Decision_single_yo(Page):
         if player.is_dropout == True: 
             return 'end'                      
 
-class Decision_single_no(Page):
+class Decision_single_no(Page): # single role group in the unobservable condition 
     form_model = 'group'
     form_fields = ['no_00','no_01','no_02','no_03','no_04','no_05','no_06','no_07','no_08','no_09','no_10','no_12','no_14','no_16','no_18','no_20']
+
     @staticmethod
     def is_displayed(player: Player):
         return player.group.n_players<2 and player.group.treatment == 2
@@ -708,10 +718,7 @@ class Post_survey(Page):
                 player.dropout_page = 'Post_survey'
                 player.is_dropout = True           
     
-class Results(Page):
-    # @staticmethod
-    # def is_displayed(player: Player):
-    #     return player.is_dropout==False   
+class Results(Page): # The page to show the payment 
     @staticmethod
     def vars_for_template(player):
         participant = player.participant
@@ -722,15 +729,11 @@ class Results(Page):
             total_earning=total_earning,
         )      
 
-class Feedback(Page):
+class Feedback(Page): # The page for the open-ended feedback
     form_model = 'player'
     form_fields = ['feedback']
-    # @staticmethod
-    # def before_next_page(player, timeout_happened):
-    #     player.confirmation_code = get_random_string(8)
-           
 
-class RM(Page):
+class RM(Page): # The page for the confirmation code
     @staticmethod
     def vars_for_template(player):
         participant = player.participant

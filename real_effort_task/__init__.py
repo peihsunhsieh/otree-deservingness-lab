@@ -17,9 +17,8 @@ class Constants(BaseConstants):
     name_in_url = 'counting_zeros'
     players_per_group = None
     num_rounds = 1
-    wage_types = {'h':0.2,'l':0.1}
-    instruction_wage_rate_assignment = '_templates/global/Instruction_wage_rate_assignment.html'
-    instruction_counting_zeros = '_templates/global/Instruction_counting_zeros.html'
+    # instruction_wage_rate_assignment = '_templates/global/Instruction_wage_rate_assignment.html'
+    # instruction_counting_zeros = '_templates/global/Instruction_counting_zeros.html'
     task_params = dict(
         retry_delay=1.0, puzzle_delay=2.0, attempts_per_puzzle=1, max_iterations=10
     )
@@ -34,33 +33,27 @@ class Group(BaseGroup):
 
 class Player(BasePlayer):
     more_high_wage = models.BooleanField(initial=True)
-    wage = models.FloatField()
-    earning = models.CurrencyField(initial=0)
+    wage = models.FloatField() # A player's wage rate
+    earning = models.CurrencyField(initial=0) # how much a player earns from the counting task
     iteration = models.IntegerField(initial=0)
-    num_trials = models.IntegerField(initial=0)
-    num_correct = models.IntegerField(initial=0)
-    num_failed = models.IntegerField(initial=0)
+    num_trials = models.IntegerField(initial=0) # how many tables a player has tried
+    num_correct = models.IntegerField(initial=0) # how many tables a player answers correctly
+    num_failed = models.IntegerField(initial=0) # how many tables a player fails
 
 
 def creating_session(subsession):
-    # defaults = dict(
-    #     retry_delay=1.0, puzzle_delay=1.0, attempts_per_puzzle=1, max_iterations=10
-    # )
+    # Draw a wage rate
     for player in subsession.get_players():
         participant = player.participant
         if participant.more_high_wage == True:
             wage_distribution = [75,25]
         else:
             wage_distribution = [25,75]
-        player.wage = random.choices([Constants.wage_types['h'],Constants.wage_types['l']],weights=wage_distribution, k=1)[0]
-        # player.session.task_params = {}
-        # for param in defaults:
-        #     player.session.task_params[param] = defaults[param]
+        player.wage = random.choices([subsession.session.high_wage_rate,subsession.session.low_wage_rate],weights=wage_distribution, k=1)[0]
+
 
 
 # puzzle-specific stuff
-
-
 class Puzzle(ExtraModel):
     """A model to keep record of all generated puzzles"""
 
@@ -84,7 +77,7 @@ def generate_puzzle(player: Player) -> Puzzle:
     task_module = get_task_module(player)
     fields = task_module.generate_puzzle_fields()
     player.iteration += 1
-    print(f'puzzle:{fields}')
+    # print(f'puzzle:{fields}')
     return Puzzle.create(
         player=player, iteration=player.iteration, timestamp=time.time(), **fields
     )

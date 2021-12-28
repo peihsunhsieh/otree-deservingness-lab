@@ -2,7 +2,7 @@ from otree.api import *
 
 
 doc = """
-Your app description
+Pre-game survey
 """
 
 
@@ -62,43 +62,6 @@ class Player(BasePlayer):
         ],
         widget=widgets.RadioSelect
     )
-    # pid2 = models.IntegerField(
-    #     choices=[
-    #         [0, 'Not important at all'],
-    #         [1, 'Not very important'],
-    #         [2, 'Very important'],
-    #         [3, 'Extremely important'],
-    #     ],
-    #     widget=widgets.RadioSelect
-    # )
-    # pid3 = models.IntegerField(
-    #     choices=[
-    #         [0, 'Not at all'],
-    #         [1, 'Not very well'],
-    #         [2, 'Very well'],
-    #         [3, 'Extremely well'],
-    #     ],
-    #     widget=widgets.RadioSelect
-    # )
-    # pid4 = models.IntegerField(
-    #     choices=[
-    #         [0, 'Never'],
-    #         [1, 'Rarely'],
-    #         [2, 'Some of the time'],
-    #         [3, 'Most of the time'],
-    #         [4, 'All of the time'],
-    #     ],
-    #     widget=widgets.RadioSelect
-    # )
-    # pid5 = models.IntegerField(
-    #     choices=[
-    #         [0, 'Not at all'],
-    #         [1, 'Very little'],
-    #         [2, 'Somewhat'],
-    #         [3, 'A great deal'],
-    #     ],
-    #     widget=widgets.RadioSelect
-    # )
     pid6 = models.IntegerField(
         choices=[
             [0, 'Closer to Democratic'],
@@ -147,15 +110,10 @@ class Page3(Page):
         elif player.pid0 == 1:
             party = 'Republican'
         return dict(
-            pid1_label='Would you call yourself a strong {} or a not very strong {}?'.format(party,party),
+            # wording is according to pid0
+            pid1_label='Would you call yourself a strong {} or a not very strong {}?'.format(party,party), 
         )            
-"""         return dict(
-            pid1_label='Would you call yourself a strong {} or a not very strong {}?'.format(party,party),
-            pid2_label='How important is being a {} to you??'.format(party),
-            pid3_label='How well does the term {} describe you??'.format(party),
-            pid4_label='When talking about {}, how often do you use “we" instead of “they”??'.format(party),
-            pid5_label='To what extent do you think of yourself as being a {}?'.format(party),
-        ) """
+
 
 class Page4(Page):
     form_model = 'player'

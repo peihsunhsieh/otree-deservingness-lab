@@ -3,7 +3,7 @@
 {{ endblock }}
 
 {{ block content }}
-<p>Welcome! You will now be participating in a short study. Altogether, this study should take about 30 minutes of your time. Just for participating today, you will earn $0.50, no matter what else happens. Bonus payments will be available and will depend on what happens during the study. Please read the following instructions carefully, because they will tell you how you can earn bonus money.</p>
+<p>Welcome! You will now be participating in a short study. Altogether, this study should take about 30 minutes of your time. Just for participating today, you will earn {{ player.session.config.participation_fee }}, no matter what else happens. Bonus payments will be available and will depend on what happens during the study. Please read the following instructions carefully, because they will tell you how you can earn bonus money.</p>
 <p>At the beginning, you will be asked some questions about yourself. After that, you will be participating in a task, which allows you to earn bonus money. <b>Please note that you have to complete the study in full to earn the participation fee and bonus.</b></p>
     {{ next_button }}
 {{ endblock }}
