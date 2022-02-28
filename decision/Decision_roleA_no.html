@@ -3,11 +3,11 @@
 {{ endblock }}
 {{ block content }}
 
-<p>You have been matched with a participant. <b>Please decide how much bonus you earned from the counting task you want to give to the participant.</b> 
+<p><b>Please decide how much bonus you earned from the counting task you want to give to the player B you will be paired with.</b> 
 You earned {{earning}} dollars in the counting zeros task, which is the maximum you can give. </p>
 
 <p><strong>Everyone has a {{p_lowwage}} probability of being 
-    assigned 10 cents per table as the wage rate and {{p_highwage}} probability of being assigned 20 cents per table as the wage rate.</strong></p>
+    assigned ${{ session.low_wage_rate }} per table as the wage rate and {{p_highwage}} probability of being assigned ${{ session.high_wage_rate }} per table as the wage rate.</strong></p>
 
 {{ formfields }}
 

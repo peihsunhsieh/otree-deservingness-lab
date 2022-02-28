@@ -77,7 +77,7 @@ def generate_puzzle(player: Player) -> Puzzle:
     task_module = get_task_module(player)
     fields = task_module.generate_puzzle_fields()
     player.iteration += 1
-    # print(f'puzzle:{fields}')
+    print(f'puzzle:{fields}')
     return Puzzle.create(
         player=player, iteration=player.iteration, timestamp=time.time(), **fields
     )
@@ -262,7 +262,6 @@ class Counting_zeros_result(Page):
     def before_next_page(player: Player, timeout_happened):
         player.participant.wage = player.wage
         player.participant.earning = player.earning
-        player.participant.wait_page_arrival = time.time()
               
 
 

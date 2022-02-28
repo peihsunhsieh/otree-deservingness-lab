@@ -3,24 +3,35 @@ from os import environ
 SESSION_CONFIGS = [
     dict(
         name='Observable',
-        app_sequence=['welcome_and_consent_form','pre_questionnaire','comprehension_check','real_effort_task','decision','end'],
+        app_sequence=['welcome_and_consent_form','pre_questionnaire','comprehension_check','real_effort_task','decision'],
         more_high_wage=True,
         treatment=1,
+        role = 'role A',
         num_demo_participants=2,
     ),   
     dict(
         name='Unobservable',
-        app_sequence=['welcome_and_consent_form','pre_questionnaire','comprehension_check','real_effort_task','decision','end'],
+        app_sequence=['welcome_and_consent_form','pre_questionnaire','comprehension_check','real_effort_task','decision'],
         more_high_wage=True,
+        role = 'role A',
         treatment=2,
         num_demo_participants=2,
     ),         
     dict(
         name='randomization',
-        app_sequence=['welcome_and_consent_form','pre_questionnaire','comprehension_check','real_effort_task','decision','end'],
-        num_demo_participants=2,
+        app_sequence=['welcome_and_consent_form','pre_questionnaire','comprehension_check','real_effort_task','decision'],
+        num_demo_participants=8,
     ),
     
+]
+
+ROOMS = [
+    dict(
+        name='CBPE',
+        display_name='Decision_making_and_effort_in_a_lab',
+        participant_label_file='_rooms/label.txt',
+        use_secure_urls=True
+    ),
 ]
 
 # if you set a property in SESSION_CONFIG_DEFAULTS, it will be inherited by all configs
@@ -29,10 +40,10 @@ SESSION_CONFIGS = [
 # e.g. self.session.config['participation_fee']
 
 SESSION_CONFIG_DEFAULTS = dict(
-    real_world_currency_per_point=1.00, participation_fee=0.50, doc="",
+    real_world_currency_per_point=1.00, participation_fee=5, doc="",
 )
 
-PARTICIPANT_FIELDS = ['tax_status','consent','more_high_wage','treatment','wage','earning','wait_page_arrival','n_players','is_dropout','dropout_page']
+PARTICIPANT_FIELDS = ['tax_status','consent','more_high_wage','treatment','wage','earning','role']
 SESSION_FIELDS = ['low_wage_rate','high_wage_rate']
 
 # ISO-639 code
